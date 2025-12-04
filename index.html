@@ -37,7 +37,6 @@
   </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen p-6">
-
   <div class="max-w-4xl mx-auto">
     <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Le Dee dentro di Lei</h1>
     <p class="text-lg text-gray-600 text-center mb-8">
@@ -76,11 +75,12 @@
     window.onload = () => {
       const shuffled = [...dee].sort(() => Math.random() - 0.5);
       const list = document.getElementById('dea-list');
+      list.innerHTML = ''; // Assicurati che sia vuoto
       shuffled.forEach(dea => {
         const div = document.createElement('div');
         div.className = `dea-card flex items-center p-4 bg-white rounded-lg shadow cursor-move border-l-4 border-${dea.colore}`;
         div.draggable = true;
-        div.setAttribute('data-id', dea.id);
+        div.dataset.id = dea.id;
         div.innerHTML = `
           <span class="drag-handle text-xl mr-4">☰</span>
           <span class="text-2xl mr-3">${dea.simbolo}</span>
@@ -89,89 +89,90 @@
             <div class="text-sm text-gray-500">${dea.descr}</div>
           </div>
         `;
-        div.addEventListener('dragstart', handleDragStart);
-        list.appendChild(div);
-      });
-    };
+div.addEventListener('dragstart', handleDragStart);         list.appendChild(div);       });       // Aggiungi eventi drag/drop       list.addEventListener('dragover', handleDragOver);       list.addEventListener('drop', handleDrop);     };
 
-    let dragSrcEl = null;
+let dragSrcEl = null;
 
-    function handleDragStart(e) {
-      dragSrcEl = this;
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/html', this.outerHTML);
-    }
+function handleDragStart(e) {
+  dragSrcEl = this;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/html', this.outerHTML);
+  this.classList.add('opacity-50');
+}
 
-    function handleDragOver(e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      return false;
-    }
+function handleDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
 
-    function handleDrop(e) {
-      e.preventDefault();
-      if (dragSrcEl !== this) {
-        const srcHTML = dragSrcEl.outerHTML;
-        dragSrcEl.outerHTML = this.outerHTML;
-        this.outerHTML = srcHTML;
-        rebindEvents();
-      }
-      return false;
-    }
+function handleDrop(e) {
+  e.preventDefault();
+  if (dragSrcEl !== this && this.classList.contains('dea-card')) {
+    const srcHTML = dragSrcEl.outerHTML;
+    const targetHTML = this.outerHTML;
+    dragSrcEl.outerHTML = targetHTML;
+    this.outerHTML = srcHTML;
 
-    function rebindEvents() {
-      document.querySelectorAll('#dea-list .dea-card').forEach(el => {
-        el.removeEventListener('dragstart', handleDragStart);
-        el.removeEventListener('dragover', handleDragOver);
-        el.removeEventListener('drop', handleDrop);
-        el.addEventListener('dragstart', handleDragStart);
-        el.addEventListener('dragover', handleDragOver);
-        el.addEventListener('drop', handleDrop);
-      });
-    }
+    // Ri-aggiungi eventi agli elementi scambiati
+    rebindEvents();
+  }
+  return false;
+}
 
-    // Aggiungi eventi drag/drop
-    document.getElementById('dea-list').addEventListener('dragover', handleDragOver);
-    document.getElementById('dea-list').addEventListener('drop', handleDrop);
+function rebindEvents() {
+  document.querySelectorAll('.dea-card').forEach(el => {
+    el.removeEventListener('dragstart', handleDragStart);
+    el.removeEventListener('dragover', handleDragOver);
+    el.removeEventListener('drop', handleDrop);
+    el.addEventListener('dragstart', handleDragStart);
+    el.addEventListener('dragover', handleDragOver);
+    el.addEventListener('drop', handleDrop);
+  });
+}
 
-    function analizza() {
-      const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card')).map(el => parseInt(el.getAttribute('data-id')));
-      const nomi = ordine.map(id => dee.find(d => d.id === id).nome);
-      const analysis = document.getElementById('analysis');
-      analysis.innerHTML = generaAnalisi(nomi);
-      document.getElementById('result').classList.remove('hidden');
-      document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
-    }
+// Aggiungi eventi drag/drop
+document.getElementById('dea-list').addEventListener('dragover', handleDragOver);
+document.getElementById('dea-list').addEventListener('drop', handleDrop);
 
-    function generaAnalisi(ordine) {
-      const plus = ordine.slice(0, 2);          // Aspirazione
-      const x = ordine.slice(2, 4);             // Attuale
-      const uguale = ordine.slice(4, 6);        // In riserva
-      const meno = [ordine[6]];                 // Rifiuto
-      const problema = `${plus[0]}/${meno[0]}`; // Problema reale
+function analizza() {
+  const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card')).map(el => parseInt(el.dataset.id));
+  const nomi = ordine.map(id => dee.find(d => d.id === id).nome);
+  const analysis = document.getElementById('analysis');
+  analysis.innerHTML = generaAnalisi(nomi);
+  document.getElementById('result').classList.remove('hidden');
+  document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+}
 
-      return `
-        <p><strong>🔹 Aspirazione (+):</strong> ${plus.join(', ')}</p>
-        <p>Cerchi unione profonda e bellezza trasformativa. È il tuo modus operandi.</p>
+function generaAnalisi(ordine) {
+  const plus = ordine.slice(0, 2);          // Aspirazione
+  const x = ordine.slice(2, 4);             // Attuale
+  const uguale = ordine.slice(4, 6);        // In riserva
+  const meno = [ordine[6]];                 // Rifiuto
+  const problema = `${plus[0]}/${meno[0]}`; // Problema reale
 
-        <p><strong>🔸 Situazione attuale (X):</strong> ${x.join(', ')}</p>
-        <p>Vivi con ${x[0]} e ${x[1]}, ma in tensione tra libertà e relazione.</p>
+  return `
+    <p><strong>🔹 Aspirazione (+):</strong> ${plus.join(', ')}</p>
+    <p>Cerchi unione profonda e bellezza trasformativa. È il tuo modus operandi.</p>
 
-        <p><strong>🔸 In riserva (=):</strong> ${uguale.join(', ')}</p>
-        <p>Hai in ombra ${uguale[0]} e ${uguale[1]} — risorse da integrare.</p>
+    <p><strong>🔸 Situazione attuale (X):</strong> ${x.join(', ')}</p>
+    <p>Vivi con ${x[0]} e ${x[1]}, ma in tensione tra libertà e relazione.</p>
 
-        <p><strong>🔸 Rifiuto (—):</strong> ${meno[0]}</p>
-        <p>Temi ${meno[0]} perché minaccia la tua autonomia o il tuo equilibrio emotivo.</p>
+    <p><strong>🔸 In riserva (=):</strong> ${uguale.join(', ')}</p>
+    <p>Hai in ombra ${uguale[0]} e ${uguale[1]} — risorse da integrare.</p>
 
-        <p><strong>🔥 Problema Reale (+1/—7):</strong> ${problema}</p>
-        <p>Desideri profondamente ${plus[0]} ma temi di perderti in ${meno[0]}. Questa tensione è il nucleo del tuo processo di individuazione.</p>
+    <p><strong>🔸 Rifiuto (—):</strong> ${meno[0]}</p>
+    <p>Temi ${meno[0]} perché minaccia la tua autonomia o il tuo equilibrio emotivo.</p>
 
-        <p><strong>🌟 La tua missione</strong></p>
-        <p>Devi imparare a danzare tra questi due poli: non devi scegliere tra fuggire o fonderti, ma trovare un equilibrio tra intensità e sicurezza. La tua anima ti chiama a un amore che trasforma senza distruggere, a una libertà che non nega la connessione.</p>
+    <p><strong>🔥 Problema Reale (+1/—7):</strong> ${problema}</p>
+    <p>Desideri profondamente ${plus[0]} ma temi di perderti in ${meno[0]}. Questa tensione è il nucleo del tuo processo di individuazione.</p>
 
-        <p>Onora tutte le dee in te. Non reprimere ${meno[0]}, ma impara a invitarla con consapevolezza. La vera forza è nell’integrazione, non nella fuga.</p>
-      `;
-    }
+    <p><strong>🌟 La tua missione</strong></p>
+    <p>Devi imparare a danzare tra questi due poli: non devi scegliere tra fuggire o fonderti, ma trovare un equilibrio tra intensità e sicurezza. La tua anima ti chiama a un amore che trasforma senza distruggere, a una libertà che non nega la connessione.</p>
+
+    <p>Onora tutte le dee in te. Non reprimere ${meno[0]}, ma impara a invitarla con consapevolezza. La vera forza è nell’integrazione, non nella fuga.</p>
+  `;
+}
   </script>
 </body>
 </html>
+```
