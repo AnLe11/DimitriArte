@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2487.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Helvetica; min-height: 17.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="it"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"/&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Le Dee dentro di Lei&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>tailwind.config = {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>theme: {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>extend: {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>colors: {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'blue-dea': '#3b82f6',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'green-dea': '#10b981',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'red-dea': '#ef4444',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'yellow-dea': '#f59e0b',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'violet-dea': '#8b5cf6',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'brown-dea': '#78350f',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>'black-dea': '#111827'</p>
+<p class="p1"><span class="Apple-converted-space">          </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.drag-handle {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>cursor: move;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>user-select: none;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.dea-card {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>transition: transform 0.2s, box-shadow 0.2s;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.dea-card:hover {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>transform: translateY(-2px);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen p-6"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="max-w-4xl mx-auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1 class="text-4xl font-bold text-center text-gray-800 mb-4"&gt;Le Dee dentro di Lei&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p class="text-lg text-gray-600 text-center mb-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>Ordina le sette dee in base alla tua preferenza. La prima è quella che più ti chiama, l'ultima quella con cui meno ti identifichi.</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="dea-list" class="space-y-3 mb-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- Le dee verranno caricate qui dinamicamente --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="analizza()"</p>
+<p class="p1"><span class="Apple-converted-space">        </span>class="bg-blue-dea hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>Scopri la tua Anima</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="result" class="mt-10 p-6 bg-white rounded-lg shadow hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h2 class="text-2xl font-bold text-gray-800 mb-4"&gt;La tua Anima&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="analysis" class="text-gray-700 space-y-4"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const dee = [</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ id: 1, nome: "Persefone", simbolo: "🌸", colore: "violet-dea", descr: "Ricettività, mondo interiore, trasformazione" },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ id: 2, nome: "Afrodite", simbolo: "🌹", colore: "red-dea", descr: "Sensualità, bellezza, creatività" },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ id: 3, nome: "Artemide", simbolo: "🌙", colore: "blue-dea", descr: "Indipendenza, obiettivi personali" },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ id: 4, nome: "Era", simbolo: "👑", colore: "yellow-dea", descr: "Impegno relazionale, matrimonio" },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ id: 5, nome: "Demetra", simbolo: "🌾", colore: "brown-dea", descr: "Maternità, nutrimento" },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ id: 6, nome: "Atena", simbolo: "🛡️", colore: "green-dea", descr: "Saggezza, strategia, razionalità" },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>{ id: 7, nome: "Estia", simbolo: "🔥", colore: "black-dea", descr: "Interiorità, spiritualità domestica" }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Carica le dee in ordine casuale</p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.onload = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const shuffled = [...dee].sort(() =&gt; Math.random() - 0.5);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const list = document.getElementById('dea-list');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>shuffled.forEach(dea =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const div = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>div.className = `dea-card flex items-center p-4 bg-white rounded-lg shadow cursor-move border-l-4 border-${dea.colore}`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>div.draggable = true;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>div.setAttribute('data-id', dea.id);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>div.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="drag-handle text-xl mr-4"&gt;☰&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span class="text-2xl mr-3"&gt;${dea.simbolo}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="font-bold text-gray-800"&gt;${dea.nome}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-sm text-gray-500"&gt;${dea.descr}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>div.addEventListener('dragstart', handleDragStart);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>list.appendChild(div);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>let dragSrcEl = null;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function handleDragStart(e) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>dragSrcEl = this;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>e.dataTransfer.effectAllowed = 'move';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>e.dataTransfer.setData('text/html', this.outerHTML);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function handleDragOver(e) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>e.dataTransfer.dropEffect = 'move';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return false;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function handleDrop(e) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>e.preventDefault();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (dragSrcEl !== this) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const srcHTML = dragSrcEl.outerHTML;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dragSrcEl.outerHTML = this.outerHTML;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>this.outerHTML = srcHTML;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>rebindEvents();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return false;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function rebindEvents() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.querySelectorAll('#dea-list .dea-card').forEach(el =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>el.removeEventListener('dragstart', handleDragStart);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>el.removeEventListener('dragover', handleDragOver);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>el.removeEventListener('drop', handleDrop);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>el.addEventListener('dragstart', handleDragStart);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>el.addEventListener('dragover', handleDragOver);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>el.addEventListener('drop', handleDrop);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Aggiungi eventi drag/drop</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('dea-list').addEventListener('dragover', handleDragOver);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('dea-list').addEventListener('drop', handleDrop);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function analizza() {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card')).map(el =&gt; parseInt(el.getAttribute('data-id')));</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const nomi = ordine.map(id =&gt; dee.find(d =&gt; d.id === id).nome);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const analysis = document.getElementById('analysis');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>analysis.innerHTML = generaAnalisi(nomi);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('result').classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.getElementById('result').scrollIntoView({ behavior: 'smooth' });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>function generaAnalisi(ordine) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const plus = ordine.slice(0, 2);<span class="Apple-converted-space">          </span>// Aspirazione</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const x = ordine.slice(2, 4); <span class="Apple-converted-space">            </span>// Attuale</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const uguale = ordine.slice(4, 6);<span class="Apple-converted-space">        </span>// In riserva</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const meno = [ordine[6]]; <span class="Apple-converted-space">                </span>// Rifiuto</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const problema = `${plus[0]}/${meno[0]}`; // Problema reale</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>return `</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;&lt;strong&gt;🔹 Aspirazione (+):&lt;/strong&gt; ${plus.join(', ')}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Cerchi unione profonda e bellezza trasformativa. È il tuo modus operandi.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;&lt;strong&gt;🔸 Situazione attuale (X):&lt;/strong&gt; ${x.join(', ')}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Vivi con ${x[0]} e ${x[1]}, ma in tensione tra libertà e relazione.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;&lt;strong&gt;🔸 In riserva (=):&lt;/strong&gt; ${uguale.join(', ')}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Hai in ombra ${uguale[0]} e ${uguale[1]} — risorse da integrare.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;&lt;strong&gt;🔸 Rifiuto (—):&lt;/strong&gt; ${meno[0]}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Temi ${meno[0]} perché minaccia la tua autonomia o il tuo equilibrio emotivo.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;&lt;strong&gt;🔥 Problema Reale (+1/—7):&lt;/strong&gt; ${problema}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Desideri profondamente ${plus[0]} ma temi di perderti in ${meno[0]}. Questa tensione è il nucleo del tuo processo di individuazione.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;&lt;strong&gt;🌟 La tua missione&lt;/strong&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Devi imparare a danzare tra questi due poli: non devi scegliere tra fuggire o fonderti, ma trovare un equilibrio tra intensità e sicurezza. La tua anima ti chiama a un amore che trasforma senza distruggere, a una libertà che non nega la connessione.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p&gt;Onora tutte le dee in te. Non reprimere ${meno[0]}, ma impara a invitarla con consapevolezza. La vera forza è nell’integrazione, non nella fuga.&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
