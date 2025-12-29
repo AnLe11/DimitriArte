@@ -40,14 +40,14 @@
   <div class="max-w-4xl mx-auto">
     <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Le Dee dentro di Lei</h1>
     <p class="text-lg text-gray-600 text-center mb-8">
-      Ordina le sette dee in base alla tua preferenza. La prima è quella che più ti chiama, l'ultima quella con cui meno ti identifichi.
+      Ordina le sette dee in base alla tua preferenza: la prima è quella che più ti chiama, l'ultima quella con cui meno ti identifichi.
     </p>
     <div id="dea-list" class="space-y-3 mb-8">
-      <!-- Le dee verranno caricate qui dinamicamente -->
+      <!-- Le dee verranno caricate dinamicamente -->
     </div>
     <div class="text-center">
       <button onclick="analizza()"
-        class="bg-blue-dea hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition">
+        class="bg-blue-dea hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition duration-200">
         Scopri la tua Anima
       </button>
     </div>
@@ -68,6 +68,7 @@
       { id: 7, nome: "Estia", simbolo: "🔥", colore: "black-dea", descr: "Interiorità, spiritualità domestica" }
     ];
 
+    // Carica le dee in ordine casuale all'avvio
     window.onload = () => {
       const shuffled = [...dee].sort(() => Math.random() - 0.5);
       const list = document.getElementById('dea-list');
@@ -86,10 +87,10 @@
           </div>
         `;
         div.addEventListener('dragstart', handleDragStart);
+        div.addEventListener('dragover', handleDragOver);
+        div.addEventListener('drop', handleDrop);
         list.appendChild(div);
       });
-      list.addEventListener('dragover', handleDragOver);
-      list.addEventListener('drop', handleDrop);
     };
 
     let dragSrcEl = null;
@@ -109,10 +110,13 @@
     function handleDrop(e) {
       e.preventDefault();
       if (dragSrcEl !== this && this.classList.contains('dea-card')) {
+        // Scambia i due elementi
         const srcHTML = dragSrcEl.outerHTML;
         const targetHTML = this.outerHTML;
         dragSrcEl.outerHTML = targetHTML;
         this.outerHTML = srcHTML;
+
+        // Ricollega gli event listener ai nuovi elementi
         rebindEvents();
       }
     }
@@ -128,13 +132,19 @@
       });
     }
 
-    // Aggiungi eventi drag/drop
-    document.getElementById('dea-list').addEventListener('dragover', handleDragOver);
-    document.getElementById('dea-list').addEventListener('drop', handleDrop);
-
     function analizza() {
-      const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card')).map(el => parseInt(el.dataset.id));
+      // Ottieni l'ordine attuale delle dee
+      const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card'))
+        .map(el => parseInt(el.dataset.id));
+
       const nomi = ordine.map(id => dee.find(d => d.id === id).nome);
+
+      // Validazione: assicurarsi che siano 7 e uniche
+      if (new Set(ordine).size !== 7) {
+        alert("Errore: assicurati che tutte le dee siano presenti e in ordine.");
+        return;
+      }
+
       const analysis = document.getElementById('analysis');
       analysis.innerHTML = generaAnalisi(nomi);
       document.getElementById('result').classList.remove('hidden');
@@ -142,31 +152,25 @@
     }
 
     function generaAnalisi(ordine) {
-      const plus = ordine.slice(0, 2);          // Aspirazione
-      const x = ordine.slice(2, 4);             // Attuale
-      const uguale = ordine.slice(4, 6);        // In riserva
-      const meno = [ordine[6]];                 // Rifiuto
-      const problema = `${plus[0]}/${meno[0]}`; // Problema reale
+      const plus = ordine.slice(0, 2);          // Aspirazione (+)
+      const x = ordine.slice(2, 4);             // Attuale (X)
+      const uguale = ordine.slice(4, 6);        // In riserva (=)
+      const meno = [ordine[6]];                 // Rifiuto (–)
+      const problema = `${plus[0]}/${meno[0]}`; // Problema reale: +1 / –7
 
       return `
         <p><strong>🔹 Aspirazione (+):</strong> ${plus.join(', ')}</p>
         <p>Cerchi unione profonda e bellezza trasformativa. È il tuo modus operandi.</p>
-
         <p><strong>🔸 Situazione attuale (X):</strong> ${x.join(', ')}</p>
         <p>Vivi con ${x[0]} e ${x[1]}, ma in tensione tra libertà e relazione.</p>
-
         <p><strong>🔸 In riserva (=):</strong> ${uguale.join(', ')}</p>
         <p>Hai in ombra ${uguale[0]} e ${uguale[1]} — risorse da integrare.</p>
-
         <p><strong>🔸 Rifiuto (—):</strong> ${meno[0]}</p>
         <p>Temi ${meno[0]} perché minaccia la tua autonomia o il tuo equilibrio emotivo.</p>
-
         <p><strong>🔥 Problema Reale (+1/—7):</strong> ${problema}</p>
         <p>Desideri profondamente ${plus[0]} ma temi di perderti in ${meno[0]}. Questa tensione è il nucleo del tuo processo di individuazione.</p>
-
         <p><strong>🌟 La tua missione</strong></p>
         <p>Devi imparare a danzare tra questi due poli: non devi scegliere tra fuggire o fonderti, ma trovare un equilibrio tra intensità e sicurezza. La tua anima ti chiama a un amore che trasforma senza distruggere, a una libertà che non nega la connessione.</p>
-
         <p>Onora tutte le dee in te. Non reprimere ${meno[0]}, ma impara a invitarla con consapevolezza. La vera forza è nell’integrazione, non nella fuga.</p>
       `;
     }
