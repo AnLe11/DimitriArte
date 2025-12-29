@@ -34,23 +34,151 @@
       transform: translateY(-2px);
       box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
     }
+    .hidden { display: none; }
   </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen p-6">
   <div class="max-w-4xl mx-auto">
     <h1 class="text-4xl font-bold text-center text-gray-800 mb-4">Le Dee dentro di Lei</h1>
     <p class="text-lg text-gray-600 text-center mb-8">
-      Ordina le sette dee in base alla tua preferenza: la prima è quella che più ti chiama, l'ultima quella con cui meno ti identifichi.
+      Scegli come vuoi procedere:
     </p>
-    <div id="dea-list" class="space-y-3 mb-8">
-      <!-- Le dee verranno caricate dinamicamente -->
-    </div>
-    <div class="text-center">
-      <button onclick="analizza()"
-        class="bg-blue-dea hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition duration-200">
-        Scopri la tua Anima
+
+    <!-- Scelta iniziale -->
+    <div id="scelta" class="space-y-4 mb-8 text-center">
+      <button onclick="mostraTest()" class="block w-full max-w-md mx-auto text-left p-4 bg-white rounded-lg shadow hover:shadow-md transition">
+        <strong>1. Fai il test</strong><br>Scopri la tua sequenza di dee rispondendo a 7 domande
+      </button>
+      <button onclick="mostraOrdinamento()" class="block w-full max-w-md mx-auto text-left p-4 bg-white rounded-lg shadow hover:shadow-md transition">
+        <strong>2. Ordina manualmente</strong><br>Se conosci già le dee, ordinale direttamente
       </button>
     </div>
+
+    <!-- Questionario -->
+    <div id="test" class="hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Questionario introduttivo</h2>
+      <form id="quizForm">
+        <!-- Domanda 1 -->
+        <div class="mb-6 p-4 bg-white rounded-lg shadow">
+          <p class="font-medium mb-3">1. Cosa ti dà più energia?</p>
+          <div class="space-y-2">
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q1" value="Persefone" class="mr-2"> Profondità emotiva, sogni, intuizione</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q1" value="Afrodite" class="mr-2"> Bellezza, piacere, sensualità</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q1" value="Artemide" class="mr-2"> Libertà, natura, solitudine</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q1" value="Era" class="mr-2"> Relazioni impegnate, stabilità</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q1" value="Demetra" class="mr-2"> Cura, nutrimento, famiglia</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q1" value="Atena" class="mr-2"> Intelletto, strategia, controllo</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q1" value="Estia" class="mr-2"> Silenzio, fuoco interiore, spiritualità</label>
+          </div>
+        </div>
+
+        <!-- Domanda 2 -->
+        <div class="mb-6 p-4 bg-white rounded-lg shadow">
+          <p class="font-medium mb-3">2. Quale libro preferisci?</p>
+          <div class="space-y-2">
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q2" value="Persefone"> Miti sull'inconscio e trasformazione</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q2" value="Afrodite"> Poesia d'amore o arte sensuale</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q2" value="Artemide"> Avventura, esplorazione, natura</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q2" value="Era"> Storie di potere e alleanze</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q2" value="Demetra"> Romanzi familiari o di cura</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q2" value="Atena"> Saggi di leadership e strategia</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q2" value="Estia"> Testi spirituali o meditativi</label>
+          </div>
+        </div>
+
+        <!-- Domanda 3 -->
+        <div class="mb-6 p-4 bg-white rounded-lg shadow">
+          <p class="font-medium mb-3">3. Come reagisci al conflitto?</p>
+          <div class="space-y-2">
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Persefone"> Mi ritiro, elaboro interiormente</label>
+            <label class="flex items-center p-50 rounded"><input type="radio" name="q3" value="Afrodite"> Cerco di sedurre o ammorbidire l'atmosfera</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Artemide"> Faccio un passo indietro e mantengo la distanza</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Era"> Cerco un accordo duraturo</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Demetra"> Mi preoccupo per chi soffre</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Atena"> Analizzo e risolvo logicamente</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Estia"> Mi ritiro nel mio spazio sacro</label>
+          </div>
+        </div>
+
+        <!-- Domanda 4 -->
+        <div class="mb-6 p-4 bg-white rounded-lg shadow">
+          <p class="font-medium mb-3">4. Quale ambiente ti rigenera?</p>
+          <div class="space-y-2">
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q4" value="Persefone"> Una foresta sotterranea o un luogo misterioso</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q4" value="Afrodite"> Un giardino fiorito o una stanza profumata</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q4" value="Artemide"> Una montagna solitaria o un lago deserto</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q4" value="Era"> Una cena elegante con persone importanti</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q4" value="Demetra"> Una cucina calda con odori di cibo</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q4" value="Atena"> Un ufficio ordinato e funzionale</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q4" value="Estia"> Una stanza silenziosa con una candela accesa</label>
+          </div>
+        </div>
+
+        <!-- Domanda 5 -->
+        <div class="mb-6 p-4 bg-white rounded-lg shadow">
+          <p class="font-medium mb-3">5. Cosa temi di più?</p>
+          <div class="space-y-2">
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q5" value="Persefone"> Perdere il contatto con il mio mondo interiore</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q5" value="Afrodite"> Perdere il desiderio o la bellezza</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q5" value="Artemide"> Essere imprigionata in una relazione</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q5" value="Era"> Perdere il controllo o il rispetto</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q5" value="Demetra"> Abbandonare chi dipende da me</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q5" value="Atena"> Perdere il controllo emotivo</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q5" value="Estia"> Essere distratta dal rumore del mondo</label>
+          </div>
+        </div>
+
+        <!-- Domanda 6 -->
+        <div class="mb-6 p-4 bg-white rounded-lg shadow">
+          <p class="font-medium mb-3">6. Quale ruolo preferisci in un gruppo?</p>
+          <div class="space-y-2">
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q6" value="Persefone"> L'ascoltatrice profonda</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q6" value="Afrodite"> La seduttrice che ispira armonia</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q6" value="Artemide"> L'indipendente che segue la sua strada</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q6" value="Era"> La leader che coordina</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q6" value="Demetra"> La nutrice che accoglie</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q6" value="Atena"> La stratega che pianifica</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q6" value="Estia"> L'osservatrice silenziosa</label>
+          </div>
+        </div>
+
+        <!-- Domanda 7 -->
+        <div class="mb-6 p-4 bg-white rounded-lg shadow">
+          <p class="font-medium mb-3">7. Quale simbolo ti rappresenta?</p>
+          <div class="space-y-2">
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q7" value="Persefone"> Un melograno</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q7" value="Afrodite"> Una rosa</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q7" value="Artemide"> Una luna crescente</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q7" value="Era"> Una corona</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q7" value="Demetra"> Una spiga di grano</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q7" value="Atena"> Una civetta</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q7" value="Estia"> Una fiamma</label>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <button type="button" onclick="processaTest()" class="bg-blue-dea hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow">
+            Genera la mia sequenza
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Ordinamento manuale -->
+    <div id="ordinamento" class="hidden">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Ordina le dee</h2>
+      <p class="text-gray-600 mb-6">Trascina e ordina le dee: la prima è quella con cui ti identifichi di più, l'ultima quella con cui meno.</p>
+      <div id="dea-list" class="space-y-3 mb-8">
+        <!-- Dee caricate dinamicamente -->
+      </div>
+      <div class="text-center">
+        <button onclick="analizza()" class="bg-blue-dea hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition">
+          Scopri la tua Anima
+        </button>
+      </div>
+    </div>
+
+    <!-- Risultato -->
     <div id="result" class="mt-10 p-6 bg-white rounded-lg shadow hidden">
       <h2 class="text-2xl font-bold text-gray-800 mb-4">La tua Anima</h2>
       <div id="analysis" class="text-gray-700 space-y-4"></div>
@@ -68,8 +196,21 @@
       { id: 7, nome: "Estia", simbolo: "🔥", colore: "black-dea", descr: "Interiorità, spiritualità domestica" }
     ];
 
-    // Carica le dee in ordine casuale all'avvio
-    window.onload = () => {
+    // Mostra il test
+    function mostraTest() {
+      document.getElementById('scelta').classList.add('hidden');
+      document.getElementById('test').classList.remove('hidden');
+    }
+
+    // Mostra l'ordinamento manuale
+    function mostraOrdinamento() {
+      document.getElementById('scelta').classList.add('hidden');
+      document.getElementById('ordinamento').classList.remove('hidden');
+      caricaDeeOrdinamento();
+    }
+
+    // Carica le dee per il drag & drop
+    function caricaDeeOrdinamento() {
       const shuffled = [...dee].sort(() => Math.random() - 0.5);
       const list = document.getElementById('dea-list');
       list.innerHTML = '';
@@ -91,36 +232,29 @@
         div.addEventListener('drop', handleDrop);
         list.appendChild(div);
       });
-    };
+    }
 
     let dragSrcEl = null;
-
     function handleDragStart(e) {
       dragSrcEl = this;
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/html', this.outerHTML);
       this.classList.add('opacity-50');
     }
-
     function handleDragOver(e) {
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
     }
-
     function handleDrop(e) {
       e.preventDefault();
       if (dragSrcEl !== this && this.classList.contains('dea-card')) {
-        // Scambia i due elementi
         const srcHTML = dragSrcEl.outerHTML;
         const targetHTML = this.outerHTML;
         dragSrcEl.outerHTML = targetHTML;
         this.outerHTML = srcHTML;
-
-        // Ricollega gli event listener ai nuovi elementi
         rebindEvents();
       }
     }
-
     function rebindEvents() {
       document.querySelectorAll('.dea-card').forEach(el => {
         el.removeEventListener('dragstart', handleDragStart);
@@ -132,31 +266,59 @@
       });
     }
 
-    function analizza() {
-      // Ottieni l'ordine attuale delle dee
-      const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card'))
-        .map(el => parseInt(el.dataset.id));
+    // Processa il test e genera l'ordine
+    function processaTest() {
+      const form = document.getElementById('quizForm');
+      const punteggi = {
+        "Persefone": 0, "Afrodite": 0, "Artemide": 0,
+        "Era": 0, "Demetra": 0, "Atena": 0, "Estia": 0
+      };
 
-      const nomi = ordine.map(id => dee.find(d => d.id === id).nome);
+      let risposteComplete = true;
+      // Raccogli le risposte
+      for (let i = 1; i <= 7; i++) {
+        const name = `q${i}`;
+        const selected = form.querySelector(`input[name="${name}"]:checked`);
+        if (!selected) {
+          risposteComplete = false;
+          break;
+        }
+        punteggi[selected.value]++;
+      }
 
-      // Validazione: assicurarsi che siano 7 e uniche
-      if (new Set(ordine).size !== 7) {
-        alert("Errore: assicurati che tutte le dee siano presenti e in ordine.");
+      if (!risposteComplete) {
+        alert("Per favore, rispondi a tutte le domande.");
         return;
       }
 
+      // Ordina per punteggio decrescente
+      const ordine = Object.keys(punteggi)
+        .sort((a, b) => punteggi[b] - punteggi
+                    // Ordina per punteggio decrescente
+      const ordine = Object.keys(punteggi)
+        .sort((a, b) => punteggi[b] - punteggi[a]);
+
+      // Mostra l'analisi con l'ordine generato
+      mostraAnalisi(ordine);
+    }
+
+    // Mostra l'analisi (comune a test e ordinamento manuale)
+    function mostraAnalisi(ordine) {
+      document.getElementById('ordinamento').classList.add('hidden');
+      document.getElementById('test').classList.add('hidden');
       const analysis = document.getElementById('analysis');
-      analysis.innerHTML = generaAnalisi(nomi);
+      analysis.innerHTML = generaAnalisi(ordine);
       document.getElementById('result').classList.remove('hidden');
       document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
     }
 
+    // Analisi basata su +/X/=/–
     function generaAnalisi(ordine) {
       const plus = ordine.slice(0, 2);          // Aspirazione (+)
       const x = ordine.slice(2, 4);             // Attuale (X)
       const uguale = ordine.slice(4, 6);        // In riserva (=)
       const meno = [ordine[6]];                 // Rifiuto (–)
-      const problema = `${plus[0]}/${meno[0]}`; // Problema reale: +1 / –7
+      const problema = `${plus[0]}/${meno[0]}`; // Problema reale
 
       return `
         <p><strong>🔹 Aspirazione (+):</strong> ${plus.join(', ')}</p>
@@ -173,6 +335,13 @@
         <p>Devi imparare a danzare tra questi due poli: non devi scegliere tra fuggire o fonderti, ma trovare un equilibrio tra intensità e sicurezza. La tua anima ti chiama a un amore che trasforma senza distruggere, a una libertà che non nega la connessione.</p>
         <p>Onora tutte le dee in te. Non reprimere ${meno[0]}, ma impara a invitarla con consapevolezza. La vera forza è nell’integrazione, non nella fuga.</p>
       `;
+    }
+
+    // Funzione per analisi manuale (da drag & drop)
+    function analizza() {
+      const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card'))
+        .map(el => dee.find(d => d.id == el.dataset.id).nome);
+      mostraAnalisi(ordine);
     }
   </script>
 </body>
