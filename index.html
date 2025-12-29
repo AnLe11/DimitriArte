@@ -254,7 +254,7 @@
             <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q15" value="Atena"> Avere risolto un problema complesso</label>
             <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q15" value="Afrodite"> Avere creato qualcosa di bello</label>
             <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q15" value="Artemide"> Avere raggiunto una meta in solitudine</label>
-            <label class            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q15" value="Persefone"> Avere superato una crisi interiore</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q15" value="Persefone"> Avere superato una crisi interiore</label>
             <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q15" value="Estia"> Avere trovato la pace</label>
           </div>
         </div>
@@ -676,14 +676,14 @@
         div.className = `dea-card flex items-center p-4 bg-white rounded-lg shadow cursor-move border-l-4 border-${dea.colore}`;
         div.draggable = true;
         div.dataset.id = dea.id;
-        div.innerHTML = `
-          <span class="drag-handle text-xl mr-4">☰</span>
-          <span class="text-2xl mr-3">${dea.simbolo}</span>
-          <div>
-            <            <div class="font-bold text-gray-800">${dea.nome}</div>
-            <div class="text-sm text-gray-500">${dea.descr}</div>
-          </div>
-        `;
+div.innerHTML = `
+  <span class="drag-handle text-xl mr-4">☰</span>
+  <span class="text-2xl mr-3">${dea.simbolo}</span>
+  <div>
+    <div class="font-bold text-gray-800">${dea.nome}</div>
+    <div class="text-sm text-gray-500">${dea.descr}</div>
+  </div>
+`;
         div.addEventListener('dragstart', handleDragStart);
         div.addEventListener('dragover', handleDragOver);
         div.addEventListener('drop', handleDrop);
@@ -800,3 +800,7 @@
 </script>
 </body>
 </html>
+    // Inizializza
+
+
+
