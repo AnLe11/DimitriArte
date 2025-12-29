@@ -46,10 +46,10 @@
 
     <!-- Scelta iniziale -->
     <div id="scelta" class="space-y-4 mb-8 text-center">
-      <button onclick="mostraTest()" class="block w-full max-w-md mx-auto text-left p-4 bg-white rounded-lg shadow hover:shadow-md transition">
+      <button id="btnTest" class="block w-full max-w-md mx-auto text-left p-4 bg-white rounded-lg shadow hover:shadow-md transition">
         <strong>1. Fai il test</strong><br>Scopri la tua sequenza di dee rispondendo a 7 domande
       </button>
-      <button onclick="mostraOrdinamento()" class="block w-full max-w-md mx-auto text-left p-4 bg-white rounded-lg shadow hover:shadow-md transition">
+      <button id="btnOrdinamento" class="block w-full max-w-md mx-auto text-left p-4 bg-white rounded-lg shadow hover:shadow-md transition">
         <strong>2. Ordina manualmente</strong><br>Se conosci già le dee, ordinale direttamente
       </button>
     </div>
@@ -91,11 +91,11 @@
           <p class="font-medium mb-3">3. Come reagisci al conflitto?</p>
           <div class="space-y-2">
             <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Persefone"> Mi ritiro, elaboro interiormente</label>
-            <label class="flex items-center p-50 rounded"><input type="radio" name="q3" value="Afrodite"> Cerco di sedurre o ammorbidire l'atmosfera</label>
+            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Afrodite"> Cerco di sedurre o ammorbidire l'atmosfera</label>
             <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Artemide"> Faccio un passo indietro e mantengo la distanza</label>
             <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Era"> Cerco un accordo duraturo</label>
             <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Demetra"> Mi preoccupo per chi soffre</label>
-            <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Atena"> Analizzo e risolvo logicamente</label>
+            <label class=" flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Atena"> Analizzo e risolvo logicamente</label>
             <label class="flex items-center p-2 hover:bg-gray-50 rounded"><input type="radio" name="q3" value="Estia"> Mi ritiro nel mio spazio sacro</label>
           </div>
         </div>
@@ -186,6 +186,19 @@
   </div>
 
   <script>
+    // Aspetta che il DOM sia pronto
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnTest = document.getElementById('btnTest');
+      const btnOrdinamento = document.getElementById('btnOrdinamento');
+
+      if (btnTest) {
+        btnTest.addEventListener('click', mostraTest);
+      }
+      if (btnOrdinamento) {
+        btnOrdinamento.addEventListener('click', mostraOrdinamento);
+      }
+    });
+
     const dee = [
       { id: 1, nome: "Persefone", simbolo: "🌸", colore: "violet-dea", descr: "Ricettività, mondo interiore, trasformazione" },
       { id: 2, nome: "Afrodite", simbolo: "🌹", colore: "red-dea", descr: "Sensualità, bellezza, creatività" },
@@ -196,13 +209,12 @@
       { id: 7, nome: "Estia", simbolo: "🔥", colore: "black-dea", descr: "Interiorità, spiritualità domestica" }
     ];
 
-    // Mostra il test
+    // --- Funzioni per la UI ---
     function mostraTest() {
       document.getElementById('scelta').classList.add('hidden');
       document.getElementById('test').classList.remove('hidden');
     }
 
-    // Mostra l'ordinamento manuale
     function mostraOrdinamento() {
       document.getElementById('scelta').classList.add('hidden');
       document.getElementById('ordinamento').classList.remove('hidden');
@@ -235,16 +247,19 @@
     }
 
     let dragSrcEl = null;
+
     function handleDragStart(e) {
       dragSrcEl = this;
       e.dataTransfer.effectAllowed = 'move';
       e.dataTransfer.setData('text/html', this.outerHTML);
       this.classList.add('opacity-50');
     }
+
     function handleDragOver(e) {
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
     }
+
     function handleDrop(e) {
       e.preventDefault();
       if (dragSrcEl !== this && this.classList.contains('dea-card')) {
@@ -255,6 +270,7 @@
         rebindEvents();
       }
     }
+
     function rebindEvents() {
       document.querySelectorAll('.dea-card').forEach(el => {
         el.removeEventListener('dragstart', handleDragStart);
@@ -275,7 +291,6 @@
       };
 
       let risposteComplete = true;
-      // Raccogli le risposte
       for (let i = 1; i <= 7; i++) {
         const name = `q${i}`;
         const selected = form.querySelector(`input[name="${name}"]:checked`);
@@ -293,16 +308,12 @@
 
       // Ordina per punteggio decrescente
       const ordine = Object.keys(punteggi)
-        .sort((a, b) => punteggi[b] - punteggi
-                    // Ordina per punteggio decrescente
-      const ordine = Object.keys(punteggi)
         .sort((a, b) => punteggi[b] - punteggi[a]);
 
-      // Mostra l'analisi con l'ordine generato
       mostraAnalisi(ordine);
     }
 
-    // Mostra l'analisi (comune a test e ordinamento manuale)
+    // Mostra l'analisi (comune a entrambi i percorsi)
     function mostraAnalisi(ordine) {
       document.getElementById('ordinamento').classList.add('hidden');
       document.getElementById('test').classList.add('hidden');
@@ -312,7 +323,7 @@
       document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Analisi basata su +/X/=/–
+    // Genera l'analisi psicologica
     function generaAnalisi(ordine) {
       const plus = ordine.slice(0, 2);          // Aspirazione (+)
       const x = ordine.slice(2, 4);             // Attuale (X)
@@ -337,10 +348,13 @@
       `;
     }
 
-    // Funzione per analisi manuale (da drag & drop)
+    // Analisi per l'ordinamento manuale
     function analizza() {
       const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card'))
-        .map(el => dee.find(d => d.id == el.dataset.id).nome);
+        .map(el => {
+          const id = el.dataset.id;
+          return dee.find(d => d.id == id).nome;
+        });
       mostraAnalisi(ordine);
     }
   </script>
