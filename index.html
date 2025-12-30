@@ -402,7 +402,7 @@
         <h3 class="text-xl font-bold text-gray-800 mt-6 mb-4">📜 Lettera Ritualica all’Anima</h3>
         <p><em>A te, Anima mia,</em></p>
         <p>Ti ho cercata in ogni donna, ma ora so che sei dentro di me.</p>
-        <p>Ti chiamo < ${p1.nome}, perché desidero la tua ${p1.nome === "Persefone" ? "profondità, il tuo viaggio nell’ombra, la tua capacità di farmi morire e rinascere" : 
+        <p>Ti chiamo ${p1.nome}, perché desidero la tua ${p1.nome === "Persefone" ? "profondità, il tuo viaggio nell’ombra, la tua capacità di farmi morire e rinascere" : 
         p1.nome === "Afrodite" ? "bellezza, la tua sensualità, la tua arte che salva" :
         p1.nome === "Artemide" ? "libertà, la tua autonomia, la tua lealtà al sé" :
         p1.nome === "Estia" ? "silenzio, il tuo fuoco domestico, la tua protezione interiore" :
@@ -419,7 +419,7 @@
         p2.nome === "Demetra" ? "nell’accudimento e nella forza" : "nella tua essenza"}.
 </p>
 <p>Ma quando ti sento troppo vicina, troppo potente, mi ritraggo.</p>
-<p>Temi che tu sia ${meno.nome} — colei che ${meno.nome === "Demetra" ? "mi chiede di annullarmi, di essere solo “madre”, “accudente”, “figlia”" :
+<p>Temo che tu sia ${meno.nome} — colei che ${meno.nome === "Demetra" ? "mi chiede di annullarmi, di essere solo “madre”, “accudente”, “figlia”" :
         meno.nome === "Era" ? "mi lega per sempre, che mi toglie libertà" :
         meno.nome === "Persefone" ? "mi trascina nell’ombra, che mi fa perdere il controllo" :
         meno.nome === "Afrodite" ? "mi seduce troppo, che mi fa dimenticare chi sono" :
@@ -449,7 +449,7 @@
 <p><em>Il mio Sé</em></p>
 
 <h3 class="text-xl font-bold text-gray-800 mt-6 mb-4">🌟 Sintesi: Il tuo processo di individuazione</h3>
-<p>Sei una donna in viaggio verso un amore maturo, che unisca ${plus.map(d => d.nome.toLowerCase()).join(' e ')}, senza cadere né nell’isolamento né nella dipendenza.</p>
+<p>Sei una donna in viaggio verso un amore maturo, che unisca ${plus.map(d => d.nome).join(' e ')}, senza cadere né nell’isolamento né nella dipendenza.</p>
 <p>La tua missione è:</p>
 <p><strong>Integrare l’Anima</strong> attraverso la ${p1.nome === "Persefone" ? "trasformazione" : "bellezza"} e la ${p2.nome === "Afrodite" ? "creatività" : "libertà"}, senza temere di nutrire né di essere nutrita.</p>
 <p>Onora ogni dea in te. Nessuna va bandita. Ogni rifiuto è una parte di te che chiede di essere vista.</p>
