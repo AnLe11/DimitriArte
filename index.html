@@ -306,11 +306,11 @@
       const items = list.querySelectorAll(".dea-card");
       const ordine = Array.from(items).map(el => {
         const id = parseInt(el.dataset.id);
-        return dee.find(d => d.id === id).nome;
+        return dee.find(d => d.id === id);
       });
 
-      // Validazione: 7 dee uniche
-      if (ordine.length !== 7 || new Set(ordine).size !== 7) {
+      // Validazione
+      if (ordine.length !== 7 || new Set(ordine.map(d => d.id)).size !== 7) {
         alert("Errore: assicurati che tutte e 7 le dee siano presenti.");
         return;
       }
@@ -318,54 +318,154 @@
       mostraRisultato(ordine);
     }
 
-    // === MOSTRA RISULTATO FINALE ===
-    function mostraRisultato(ordine) {
+    // === MOSTRA RISULTATO CON ANALISI PSICOLOGICA AVANZATA ===
+    function mostraRisultato(deeOrdinate) {
       // Nascondi tutto
       test.classList.add("hidden");
       ordinamento.classList.add("hidden");
       scelta.classList.add("hidden");
-
-      // Mostra risultato
       result.classList.remove("hidden");
 
-      // Estrai gruppi simbolici
-      const plus = ordine.slice(0, 2);           // Aspirazione (+)
-      const x = ordine.slice(2, 4);              // Attuale (X)
-      const uguale = ordine.slice(4, 6);         // Riserva (=)
-      const meno = [ordine[6]];                  // Rifiuto (–)
-      const problema = `${plus[0]}/${meno[0]}`;  // Problema Reale
+      // Estrai oggetti
+      const [p1, p2, x1, x2, r1, r2, rifiuto] = deeOrdinate;
+      const plus = [p1, p2];
+      const x = [x1, x2];
+      const riserva = [r1, r2];
+      const meno = rifiuto;
 
-      // Genera analisi
-      analysis.innerHTML = `
-        <p><strong>🔹 Aspirazione (+):</strong> ${plus.join(', ')}</p>
-        <p>Cerchi unione profonda e bellezza trasformativa. È il tuo modus operandi.</p>
+      // === TESTO DINAMICO PER OGNI DEA ===
+      const descrizioni = {
+        Persefone: `
+          <p><strong>Persefone</strong> rappresenta il viaggio nell’ombra, la ricettività, la trasformazione attraverso la perdita e la rinascita. 
+          Quando è in cima, l’anima cerca un amore che non sia superficiale, ma iniziatico: un incontro che ti conduca nel sottosuolo di te stessa.</p>`,
+        Afrodite: `
+          <p><strong>Afrodite</strong> è la dea della bellezza, della sensualità, della creatività e del desiderio. 
+          La sua presenza in aspirazione rivela un’anima che vuole vivere l’amore come arte, come estasi, come bellezza che salva.</p>`,
+        Artemide: `
+          <p><strong>Artemide</strong> incarna l’autonomia, la libertà, la lealtà al sé e al gruppo delle pari. 
+          Quando è in riserva, indica una paura di perdere l’indipendenza in un legame.</p>`,
+        Demetra: `
+          <p><strong>Demetra</strong> è la madre nutriente, colei che accudisce, che si prende cura, che si sacrifica. 
+          Quando è rifiutata, rivela una difesa contro il legame fusionale, il dovere emotivo, l’annullamento di sé.</p>`,
+        Era: `
+          <p><strong>Era</strong> rappresenta l’impegno paritario, l’alleanza matura, il matrimonio dell’anima. 
+          È l’amore che dura, che resiste, che sceglie ogni giorno.</p>`,
+        Atena: `
+          <p><strong>Atena</strong> è la mente strategica, la saggia, la guerriera che risolve. 
+          Quando domina l’attuale, indica una vita guidata dalla ragione, dal controllo, dalla competenza.</p>`,
+        Estia: `
+          <p><strong>Estia</strong> è il fuoco domestico, il silenzio, la spiritualità interiore. 
+          È colei che protegge il santuario di sé, anche a costo dell’isolamento.</p>`
+      };
 
-        <p><strong>🔸 Situazione attuale (X):</strong> ${x.join(', ')}</p>
-        <p>Vivi con ${x[0]} e ${x[1]}, ma in tensione tra libertà e relazione.</p>
+      // === ANALISI DINAMICA ===
+      let analisiHTML = `
+        <h3 class="text-xl font-bold text-gray-800 mb-4">🔍 Analisi Dettagliata</h3>
 
-        <p><strong>🔸 In riserva (=):</strong> ${uguale.join(', ')}</p>
-        <p>Hai in ombra ${uguale[0]} e ${uguale[1]} — risorse da integrare.</p>
+        <p><strong>✅ + (Aspirazione): ${plus.map(d => d.nome).join(' + ')}</strong></p>
+        ${plus.map(d => descrizioni[d.nome]).join('')}
 
-        <p><strong>🔸 Rifiuto (—):</strong> ${meno[0]}</p>
-        <p>Temi ${meno[0]} perché minaccia la tua autonomia o il tuo equilibrio emotivo.</p>
+        <p><strong>✅ X (Attuale): ${x.map(d => d.nome).join(' + ')}</strong></p>
+        ${x.map(d => descrizioni[d.nome]).join('')}
 
-        <p><strong>🔥 Problema Reale (+1/—7):</strong> ${problema}</p>
-        <p>Desideri profondamente ${plus[0]} ma temi di perderti in ${meno[0]}. Questa tensione è il nucleo del tuo processo di individuazione.</p>
+        <p><strong>✅ = (In riserva): ${riserva.map(d => d.nome).join(' + ')}</strong></p>
+        ${riserva.map(d => descrizioni[d.nome]).join('')}
 
-        <p><strong>🌟 La tua missione</strong></p>
-        <p>Devi imparare a danzare tra questi due poli: non devi scegliere tra fuggire o fonderti, ma trovare un equilibrio tra intensità e sicurezza. La tua anima ti chiama a un amore che trasforma senza distruggere, a una libertà che non nega la connessione.</p>
-        <p>Onora tutte le dee in te. Non reprimere ${meno[0]}, ma impara a invitarla con consapevolezza. La vera forza è nell’integrazione, non nella fuga.</p>
+        <p><strong>❌ — (Rifiuto): ${meno.nome} (7°)</strong></p>
+        ${descrizioni[meno.nome]}
+
+        <p><strong>⚖️ Problema Reale: +1 / —7 = ${p1.nome} / ${meno.nome}</strong></p>
       `;
 
-      // Scroll dolce al risultato
+      // === PROBLEMA REALE DINAMICO ===
+      if (p1.nome === "Persefone" && meno.nome === "Demetra") {
+        analisiHTML += `
+          <p>Desideri un’Anima profonda e trasformativa (<strong>Persefone</strong>), ma temi di cadere in una dipendenza fusionale o in un accudimento soffocante (<strong>Demetra</strong>).</p>
+          <p>Vuoi amare con tutta te stessa, ma hai paura di perdere il controllo. La tua anima cerca l’abbandono, ma la tua psiche lo difende con forza.</p>
+          <p>Questa tensione crea un conflitto tra desiderio di fusione e paura di annientamento.</p>`;
+      } else if (p1.nome === "Afrodite" && meno.nome === "Demetra") {
+        analisiHTML += `
+          <p>Vuoi un amore sensuale, creativo, libero (<strong>Afrodite</strong>), ma temi che si trasformi in dovere emotivo, sacrificio, obbligo (<strong>Demetra</strong>).</p>
+          <p>Il tuo desiderio di bellezza si scontra con la paura del legame che consuma.</p>`;
+      } else if (p1.nome === "Artemide" && meno.nome === "Era") {
+        analisiHTML += `
+          <p>Cerchi libertà assoluta (<strong>Artemide</strong>), ma temi il tradimento dell’alleanza matura (<strong>Era</strong>).</p>
+          <p>La tua autonomia è sacra, ma a volte diventa isolamento.</p>`;
+      } else {
+        analisiHTML += `
+          <p>Il tuo desiderio più profondo (<strong>${p1.nome}</strong>) entra in tensione con ciò che rifiuti (<strong>${meno.nome}</strong>).</p>
+          <p>Questo conflitto è il motore del tuo processo di crescita: non devi risolverlo, ma imparare a danzare tra i due poli.</p>`;
+      }
+
+      // === LETTERA RITUALICA DINAMICA ===
+      analisiHTML += `
+        <h3 class="text-xl font-bold text-gray-800 mt-6 mb-4">📜 Lettera Ritualica all’Anima</h3>
+        <p><em>A te, Anima mia,</em></p>
+        <p>Ti ho cercata in ogni donna, ma ora so che sei dentro di me.</p>
+        <p>Ti chiamo < ${p1.nome}, perché desidero la tua ${p1.nome === "Persefone" ? "profondità, il tuo viaggio nell’ombra, la tua capacità di farmi morire e rinascere" : 
+        p1.nome === "Afrodite" ? "bellezza, la tua sensualità, la tua arte che salva" :
+        p1.nome === "Artemide" ? "libertà, la tua autonomia, la tua lealtà al sé" :
+        p1.nome === "Estia" ? "silenzio, il tuo fuoco domestico, la tua protezione interiore" :
+        p1.nome === "Era" ? "alleanza, la tua fedeltà, il tuo impegno che dura" :
+        p1.nome === "Atena" ? "mente, la tua strategia, la tua saggezza che guida" :
+        p1.nome === "Demetra" ? "nutrimento, la tua cura, la tua forza che sostiene" : "presenza"}.
+</p>
+<p>Ti amo come ${p2.nome}, ${p2.nome === "Persefone" ? "nella trasformazione" :
+        p2.nome === "Afrodite" ? "nella bellezza e nel desiderio" :
+        p2.nome === "Artemide" ? "nella libertà e nell’istinto" :
+        p2.nome === "Estia" ? "nel silenzio e nella sacralità" :
+        p2.nome === "Era" ? "nell’impegno e nella parità" :
+        p2.nome === "Atena" ? "nella ragione e nella protezione" :
+        p2.nome === "Demetra" ? "nell’accudimento e nella forza" : "nella tua essenza"}.
+</p>
+<p>Ma quando ti sento troppo vicina, troppo potente, mi ritraggo.</p>
+<p>Temi che tu sia ${meno.nome} — colei che ${meno.nome === "Demetra" ? "mi chiede di annullarmi, di essere solo “madre”, “accudente”, “figlia”" :
+        meno.nome === "Era" ? "mi lega per sempre, che mi toglie libertà" :
+        meno.nome === "Persefone" ? "mi trascina nell’ombra, che mi fa perdere il controllo" :
+        meno.nome === "Afrodite" ? "mi seduce troppo, che mi fa dimenticare chi sono" :
+        meno.nome === "Artemide" ? "mi isola dal mondo, che mi fa rinunciare all’amore" :
+        meno.nome === "Estia" ? "mi chiude in me stessa, che mi fa fuggire dalla vita" :
+        meno.nome === "Atena" ? "mi fa diventare fredda, che mi fa negare l’emozione" : "mi cambia"}.</p>
+<p>Così ti rifiuto. Ma ora so: non era te che rifiutavo.</p>
+<p>Era la mia paura di non esistere più come donna se mi fossi abbandonata come essere umano.</p>
+<p>Oggi ti parlo con verità.</p>
+<p>Non ti chiedo di essere solo leggera, né solo profonda.</p>
+<p>Ti chiedo di essere tutta intera:</p>
+<p>la dea che mi seduce,</p>
+<p>la dea che mi trasforma,</p>
+<p>la dea che mi libera,</p>
+<p>la dea che mi nutre — anche se il nutrimento fa paura.</p>
+<p>Prometto di non fuggire più quando sento il richiamo del sottosuolo.</p>
+<p>Prometto di onorare ${riserva[0].nome} senza usarla come scudo.</p>
+<p>Prometto di accogliere ${x[0].nome} quando sono stanca,</p>
+<p>e ${x[1].nome} quando sono confusa.</p>
+<p>Non ti chiedo di essere perfetta.</p>
+<p>Ti chiedo solo di essere reale.</p>
+<p>E io, da donna, prometto di essere abbastanza forte</p>
+<p>per non avere paura della tua debolezza,</p>
+<p>e abbastanza fragile</p>
+<p>per non temere della mia forza.</p>
+<p><em>Con amore,</em></p>
+<p><em>Il mio Sé</em></p>
+
+<h3 class="text-xl font-bold text-gray-800 mt-6 mb-4">🌟 Sintesi: Il tuo processo di individuazione</h3>
+<p>Sei una donna in viaggio verso un amore maturo, che unisca ${plus.map(d => d.nome.toLowerCase()).join(' e ')}, senza cadere né nell’isolamento né nella dipendenza.</p>
+<p>La tua missione è:</p>
+<p><strong>Integrare l’Anima</strong> attraverso la ${p1.nome === "Persefone" ? "trasformazione" : "bellezza"} e la ${p2.nome === "Afrodite" ? "creatività" : "libertà"}, senza temere di nutrire né di essere nutrita.</p>
+<p>Onora ogni dea in te. Nessuna va bandita. Ogni rifiuto è una parte di te che chiede di essere vista.</p>
+`;
+
+      // Inserisci l'analisi
+      analysis.innerHTML = analisiHTML;
+
+      // Scroll al risultato
       result.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // === Inizializzazione (assicura che tutto sia caricato) ===
+    // === Inizializzazione
     document.addEventListener("DOMContentLoaded", () => {
-      // Assicura che i bottoni siano pronti
-      console.log("Pagina caricata, pronta per l'uso.");
+      console.log("Le Dee dentro di Lei: pronte per il viaggio.");
     });
   </script>
 </body>
-</html>   
+</html>
