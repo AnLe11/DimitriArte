@@ -97,7 +97,29 @@
         </div>
       </form>
     </div>
-      <script>
+    <!-- SEZIONE ORDINAMENTO MANUALE -->
+    <div id="ordinamento" class="hidden mt-10">
+      <p class="text-center mb-6 text-gray-700">
+        Trascina le dee in ordine di importanza: 
+        <strong>dalla più vicina a te alla meno presente</strong>.
+      </p>
+      <div id="dea-list" class="space-y-3 mb-8"></div>
+      <div class="text-center">
+        <button 
+          onclick="analizza()" 
+          class="bg-blue-dea hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition duration-200">
+          Scopri la tua Anima
+        </button>
+      </div>
+    </div>
+
+    <!-- SEZIONE RISULTATO FINALE -->
+    <div id="result" class="hidden mt-10 p-6 bg-white rounded-lg shadow">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">La tua Anima</h2>
+      <div id="analysis" class="text-gray-700 space-y-4"></div>
+    </div>
+  </div>
+    <script>
     // === DATI DELLE DEE (con attributi ricchi) ===
     const dee = [
       { id: 1, nome: "Persefone", simbolo: "🌸", colore: "violet-dea", descr: "Ricettività, mondo interiore, trasformazione" },
@@ -150,144 +172,57 @@
     ];
 
     // === MAPPATURA DOMANDA → RISONANZE ARCHETIPICHE ===
-    // Ogni domanda attiva 2-3 risonanze (non tutte le dee)
     const mappaRisonanze = [
-      ["Trasformazione", "Desiderio", "Alleanza"],           // 1
-      ["Libertà", "Saggezza", "Cura"],                       // 2
-      ["Centro", "Saggezza", "Trasformazione"],              // 3
-      ["Desiderio", "Libertà", "Centro"],                    // 4
-      ["Desiderio", "Cura", "Libertà"],                      // 5
-      ["Saggezza", "Trasformazione", "Desiderio"],           // 6
-      ["Trasformazione", "Centro", "Libertà"],               // 7
-      ["Alleanza", "Trasformazione", "Saggezza"],            // 8
-      ["Cura", "Centro", "Desiderio"],                       // 9
-      ["Trasformazione", "Cura", "Saggezza"],                // 10
-      ["Saggezza", "Trasformazione", "Centro"],              // 11
-      ["Desiderio", "Libertà", "Alleanza"],                  // 12
-      ["Trasformazione", "Centro", "Desiderio"],             // 13
-      ["Libertà", "Trasformazione", "Alleanza"],             // 14
-      ["Saggezza", "Cura", "Alleanza"],                      // 15
-      ["Libertà", "Cura", "Saggezza"],                       // 16
-      ["Cura", "Desiderio", "Centro"],                       // 17
-      ["Trasformazione", "Cura", "Libertà"],                 // 18
-      ["Trasformazione", "Centro", "Cura"],                  // 19
-      ["Libertà", "Cura", "Saggezza"],                       // 20
-      ["Desiderio", "Alleanza", "Trasformazione"],           // 21
-      ["Desiderio", "Saggezza", "Libertà"],                  // 22
-      ["Cura", "Trasformazione", "Centro"],                  // 23
-      ["Trasformazione", "Cura", "Libertà"],                 // 24
-      ["Alleanza", "Libertà", "Saggezza"],                   // 25
-      ["Trasformazione", "Centro", "Desiderio"],             // 26
-      ["Trasformazione", "Cura", "Saggezza"],                // 27
-      ["Desiderio", "Alleanza", "Trasformazione"],           // 28
-      ["Libertà", "Trasformazione", "Centro"],               // 29
-      ["Trasformazione", "Centro", "Libertà"],               // 30
-      ["Desiderio", "Saggezza", "Cura"],                     // 31
-      ["Trasformazione", "Alleanza", "Saggezza"],            // 32
-      ["Trasformazione", "Centro", "Alleanza"],              // 33
-      ["Cura", "Centro", "Libertà"],                         // 34
-      ["Trasformazione", "Cura", "Alleanza"],                // 35
-      ["Trasformazione", "Centro", "Saggezza"]               // 36
+      ["Trasformazione", "Desiderio", "Alleanza"],
+      ["Libertà", "Saggezza", "Cura"],
+      ["Centro", "Saggezza", "Trasformazione"],
+      ["Desiderio", "Libertà", "Centro"],
+      ["Desiderio", "Cura", "Libertà"],
+      ["Saggezza", "Trasformazione", "Desiderio"],
+      ["Trasformazione", "Centro", "Libertà"],
+      ["Alleanza", "Trasformazione", "Saggezza"],
+      ["Cura", "Centro", "Desiderio"],
+      ["Trasformazione", "Cura", "Saggezza"],
+      ["Saggezza", "Trasformazione", "Centro"],
+      ["Desiderio", "Libertà", "Alleanza"],
+      ["Trasformazione", "Centro", "Desiderio"],
+      ["Libertà", "Trasformazione", "Alleanza"],
+      ["Saggezza", "Cura", "Alleanza"],
+      ["Libertà", "Cura", "Saggezza"],
+      ["Cura", "Desiderio", "Centro"],
+      ["Trasformazione", "Cura", "Libertà"],
+      ["Trasformazione", "Centro", "Cura"],
+      ["Libertà", "Cura", "Saggezza"],
+      ["Desiderio", "Alleanza", "Trasformazione"],
+      ["Desiderio", "Saggezza", "Libertà"],
+      ["Cura", "Trasformazione", "Centro"],
+      ["Trasformazione", "Cura", "Libertà"],
+      ["Alleanza", "Libertà", "Saggezza"],
+      ["Trasformazione", "Centro", "Desiderio"],
+      ["Trasformazione", "Cura", "Saggezza"],
+      ["Desiderio", "Alleanza", "Trasformazione"],
+      ["Libertà", "Trasformazione", "Centro"],
+      ["Trasformazione", "Centro", "Libertà"],
+      ["Desiderio", "Saggezza", "Cura"],
+      ["Trasformazione", "Alleanza", "Saggezza"],
+      ["Trasformazione", "Centro", "Alleanza"],
+      ["Cura", "Centro", "Libertà"],
+      ["Trasformazione", "Cura", "Alleanza"],
+      ["Trasformazione", "Centro", "Saggezza"]
     ];
-            // === GENERA DOMANDE DINAMICAMENTE ===
-    function generaDomande() {
-      const questionsContainer = document.getElementById("questions-container");
-      questionsContainer.innerHTML = "";
-
-      testiDomande.forEach((domanda, i) => {
-        const div = document.createElement("div");
-        div.className = `question ${i === 0 ? '' : 'hidden'}`;
-        div.dataset.index = i;
-
-        div.innerHTML = `
-          <p class="font-semibold mb-3">${i + 1}. ${domanda}</p>
-          <textarea class="w-full p-2 border rounded mb-3 text-sm" 
-                    placeholder="Puoi scrivere qui la tua risposta..." rows="2"></textarea>
-          <p class="text-sm text-gray-600 mb-2">Quale energia risuona in te mentre rispondi?</p>
-          <div class="flex flex-wrap gap-2 risonanze-group"></div>
-        `;
-
-        const risonanzeGroup = div.querySelector(".risonanze-group");
-        const risonanzeDomanda = mappaRisonanze[i];
-
-        // Aggiungi solo le risonanze pertinenti per questa domanda
-        ["Persefone", "Afrodite", "Artemide", "Era", "Demetra", "Atena", "Estia"].forEach(nomeDea => {
-          const dea = dee.find(d => d.nome === nomeDea);
-          const risonanza = {
-            Persefone: "Trasformazione",
-            Afrodite: "Desiderio",
-            Artemide: "Libertà",
-            Era: "Alleanza",
-            Demetra: "Cura",
-            Atena: "Saggezza",
-            Estia: "Centro"
-          }[dea.nome];
-
-          if (risonanzeDomanda.includes(risonanza)) {
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.className = `risonanza text-${dea.colore} border-${dea.colore}`;
-            btn.dataset.dea = dea.nome;
-            btn.dataset.risonanza = risonanza;
-            btn.innerHTML = `<span class="mr-1">${dea.simbolo}</span>${risonanza}`;
-            risonanzeGroup.appendChild(btn);
-          }
-        });
-
-        questionsContainer.appendChild(div);
-      });
-
-      // Inizializza eventi dopo aver creato i pulsanti
-      aggiungiEventiRisonanza();
-    }
-
-    // === GESTISCI EVENTI DI RISONANZA ===
-    function aggiungiEventiRisonanza() {
-      document.querySelectorAll('.risonanze-group').forEach(group => {
-        const buttons = group.querySelectorAll('button');
-        buttons.forEach(btn => {
-          btn.addEventListener('click', function () {
-            const selected = group.querySelectorAll('.selected');
-            const maxSelections = 3;
-
-            if (this.classList.contains('selected')) {
-              this.classList.remove('selected');
-              const dea = this.dataset.dea;
-              score[dea] = Math.max(0, score[dea] - 1);
-            } else if (selected.length < maxSelections) {
-              this.classList.add('selected');
-              const dea = this.dataset.dea;
-              score[dea] = (score[dea] || 0) + 1;
-            }
-          });
-        });
-      });
-    }
-
-    // === NAVIGAZIONE TRA LE DOMANDE ===
-    function showQ() {
-      const questions = document.querySelectorAll(".question");
-      questions.forEach((q, i) => {
-        q.classList.toggle("hidden", i !== idx);
-      });
-      document.getElementById("currentQ").textContent = idx + 1;
-
-      const nextBtn = document.getElementById("nextBtn");
-      const submitBtn = document.getElementById("submitBtn");
-      nextBtn.classList.toggle("hidden", idx === testiDomande.length - 1);
-      submitBtn.classList.toggle("hidden", idx !== testiDomande.length - 1);
-    }
-
-    // === INIZIALIZZAZIONE EVENTI (eseguita dopo il DOM) ===
+      <script>
+    // === INIZIALIZZAZIONE DOPO IL CARICAMENTO DEL DOM ===
     document.addEventListener("DOMContentLoaded", () => {
-      // === RIFERIMENTI DOM (ora sicuri) ===
+      // === RIFERIMENTI AGLI ELEMENTI DEL DOM ===
       const scelta = document.getElementById("scelta");
       const test = document.getElementById("test");
       const ordinamento = document.getElementById("ordinamento");
       const result = document.getElementById("result");
       const analysis = document.getElementById("analysis");
+      const currentQ = document.getElementById("currentQ");
       const nextBtn = document.getElementById("nextBtn");
       const submitBtn = document.getElementById("submitBtn");
+      const questionsContainer = document.getElementById("questions-container");
 
       let idx = 0;
       let score = { Persefone: 0, Afrodite: 0, Artemide: 0, Era: 0, Demetra: 0, Atena: 0, Estia: 0 };
@@ -307,10 +242,92 @@
         caricaDee();
       };
 
-      // === CLICK SU "AVANTI" ===
-      nextBtn.onclick = () => {
+      // === GENERA DOMANDE DINAMICAMENTE ===
+      function generaDomande() {
+        questionsContainer.innerHTML = "";
+        testiDomande.forEach((domanda, i) => {
+          const div = document.createElement("div");
+          div.className = `question ${i === 0 ? '' : 'hidden'}`;
+          div.dataset.index = i;
+
+          div.innerHTML = `
+            <p class="font-semibold mb-3">${i + 1}. ${domanda}</p>
+            <textarea class="w-full p-2 border rounded mb-3 text-sm" 
+                      placeholder="Puoi scrivere qui la tua risposta..." rows="2"></textarea>
+            <p class="text-sm text-gray-600 mb-2">Quale energia risuona in te mentre rispondi?</p>
+            <div class="flex flex-wrap gap-2 risonanze-group"></div>
+          `;
+
+          const risonanzeGroup = div.querySelector(".risonanze-group");
+          const risonanzeDomanda = mappaRisonanze[i];
+
+          // Aggiungi solo le risonanze pertinenti
+          ["Persefone", "Afrodite", "Artemide", "Era", "Demetra", "Atena", "Estia"].forEach(nomeDea => {
+            const dea = dee.find(d => d.nome === nomeDea);
+            const risonanza = {
+              Persefone: "Trasformazione",
+              Afrodite: "Desiderio",
+              Artemide: "Libertà",
+              Era: "Alleanza",
+              Demetra: "Cura",
+              Atena: "Saggezza",
+              Estia: "Centro"
+            }[dea.nome];
+
+            if (risonanzeDomanda.includes(risonanza)) {
+              const btn = document.createElement("button");
+              btn.type = "button";
+              btn.className = `risonanza text-${dea.colore} border-${dea.colore}`;
+              btn.dataset.dea = dea.nome;
+              btn.dataset.risonanza = risonanza;
+              btn.innerHTML = `<span class="mr-1">${dea.simbolo}</span>${risonanza}`;
+              risonanzeGroup.appendChild(btn);
+            }
+          });
+
+          questionsContainer.appendChild(div);
+        });
+
+        // Inizializza eventi risonanza
+        aggiungiEventiRisonanza();
+      }
+
+      // === GESTISCI SELEZIONE RISONANZE ===
+      function aggiungiEventiRisonanza() {
+        document.querySelectorAll('.risonanze-group').forEach(group => {
+          const buttons = group.querySelectorAll('button');
+          buttons.forEach(btn => {
+            btn.addEventListener('click', function () {
+              const selected = group.querySelectorAll('.selected');
+              const maxSelections = 3;
+
+              if (this.classList.contains('selected')) {
+                this.classList.remove('selected');
+                const dea = this.dataset.dea;
+                score[dea] = Math.max(0, score[dea] - 1);
+              } else if (selected.length < maxSelections) {
+                this.classList.add('selected');
+                const dea = this.dataset.dea;
+                score[dea] = (score[dea] || 0) + 1;
+              }
+            });
+          });
+        });
+      }
+
+      // === NAVIGAZIONE TRA LE DOMANDE ===
+      function showQ() {
         const questions = document.querySelectorAll(".question");
-        const group = questions[idx].querySelector('.risonanze-group');
+        questions.forEach((q, i) => {
+          q.classList.toggle("hidden", i !== idx);
+        });
+        currentQ.textContent = idx + 1;
+        nextBtn.classList.toggle("hidden", idx === testiDomande.length - 1);
+        submitBtn.classList.toggle("hidden", idx !== testiDomande.length - 1);
+      }
+
+      nextBtn.onclick = () => {
+        const group = document.querySelectorAll(".question")[idx].querySelector('.risonanze-group');
         const selected = group.querySelectorAll('.selected');
         if (selected.length === 0) {
           alert("Seleziona almeno una risonanza");
@@ -320,26 +337,23 @@
         showQ();
       };
 
-      // === CLICK SU "SCOPRI LA TUA ANIMA" (test) ===
       submitBtn.onclick = () => {
         const ordine = Object.keys(score).sort((a, b) => score[b] - score[a]);
         mostraRisultato(ordine);
       };
-            // === DRAG & DROP: carica dee in ordine casuale ===
+
+      // === DRAG & DROP: carica dee in ordine casuale ===
       function caricaDee() {
         const list = document.getElementById("dea-list");
         list.innerHTML = "";
-
-        // Mescola casualmente le dee
         const shuffled = [...dee].sort(() => Math.random() - 0.5);
-
         shuffled.forEach(dea => {
           const el = creaElementoDea(dea);
           list.appendChild(el);
         });
       }
 
-      // === CREA UN ELEMENTO DRAGGABLE PER OGNI DEA ===
+      // === CREA ELEMENTO DRAGGABLE PER OGNI DEA ===
       function creaElementoDea(dea) {
         const div = document.createElement("div");
         div.className = `dea-card flex items-center p-4 bg-white rounded-lg shadow cursor-move border-l-4 border-${dea.colore}`;
@@ -399,8 +413,7 @@
 
         return div;
       }
-
-      // === ANALISI DELL'ORDINE MANUALE ===
+            // === ANALISI ORDINAMENTO MANUALE ===
       window.analizza = function () {
         const list = document.getElementById("dea-list");
         const items = list.querySelectorAll(".dea-card");
@@ -419,12 +432,6 @@
 
       // === MOSTRA RISULTATO CON ANALISI PSICOLOGICA ===
       function mostraRisultato(ordine) {
-        const test = document.getElementById("test");
-        const ordinamento = document.getElementById("ordinamento");
-        const scelta = document.getElementById("scelta");
-        const result = document.getElementById("result");
-        const analysis = document.getElementById("analysis");
-
         test.classList.add("hidden");
         ordinamento.classList.add("hidden");
         scelta.classList.add("hidden");
@@ -470,6 +477,7 @@
           analisiHTML += `<p>Cerchi libertà assoluta (<strong>Artemide</strong>), ma temi il tradimento dell’alleanza matura (<strong>Era</strong>).<br>La tua autonomia è sacra, ma a volte diventa isolamento.</p>`;
         } else {
           analisiHTML += `<p>Il tuo desiderio più profondo (<strong>${p1}</strong>) entra in tensione con ciò che rifiuti (<strong>${meno}</strong>).<br>Questo conflitto è il motore del tuo processo di crescita.</p>`;
+        }
 
         analisiHTML += `<h3 class="text-xl font-bold text-gray-800 mt-6 mb-4">📜 Lettera Ritualica all’Anima</h3>`;
         analisiHTML += `<p><em>A te, Anima mia,</em></p>`;
@@ -491,7 +499,7 @@
         analisiHTML += `<p>Ma quando ti sento troppo vicina, troppo potente, mi ritraggo.</p>`;
         analisiHTML += `<p>Temo che tu sia ${meno} — colei che ${meno === "Demetra" ? "mi chiede di annullarmi, di essere solo “madre”, “accudente”, “figlia”" :
           meno === "Era" ? "mi lega per sempre, che mi toglie libertà" :
-          meno === "Persefone" ? "mi trascina nell’ombra, che mi fa perdere il controllo" :
+          meno === "Persefone" ? "mi trascina nell’ombra, che mi fa perd e il controllo" :
           meno === "Afrodite" ? "mi seduce troppo, che mi fa dimenticare chi sono" :
           meno === "Artemide" ? "mi isola dal mondo, che mi fa rinunciare all’amore" :
           meno === "Estia" ? "mi chiude in me stessa, che mi fa fuggire dalla vita" :
