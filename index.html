@@ -30,12 +30,25 @@
       box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
     }
     .risonanza {
-      @apply px-3 py-1 rounded-full text-sm border transition;
+      padding: 0.25rem 0.75rem;
+      border-radius: 0.5rem;
+      border-width: 1px;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
     }
     .risonanza.selected {
-      @apply bg-opacity-20 border-2;
+      background-color: rgba(255, 255, 255, 0.6);
+      border-width: 2px;
     }
-    .question { @apply mb-6 p-4 bg-white rounded shadow; }
+    .question {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
     .drop-area {
       min-height: 60px;
       border: 2px dashed #d1d5db;
@@ -84,29 +97,7 @@
         </div>
       </form>
     </div>
-        <!-- SEZIONE ORDINAMENTO MANUALE -->
-    <div id="ordinamento" class="hidden mt-10">
-      <p class="text-center mb-6 text-gray-700">
-        Trascina le dee in ordine di importanza: 
-        <strong>dalla più vicina a te alla meno presente</strong>.
-      </p>
-      <div id="dea-list" class="space-y-3 mb-8"></div>
-      <div class="text-center">
-        <button 
-          onclick="analizza()" 
-          class="bg-blue-dea hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition duration-200">
-          Scopri la tua Anima
-        </button>
-      </div>
-    </div>
-
-    <!-- SEZIONE RISULTATO FINALE -->
-    <div id="result" class="hidden mt-10 p-6 bg-white rounded-lg shadow">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">La tua Anima</h2>
-      <div id="analysis" class="text-gray-700 space-y-4"></div>
-    </div>
-  </div>
-    <script>
+      <script>
     // === DATI DELLE DEE (con attributi ricchi) ===
     const dee = [
       { id: 1, nome: "Persefone", simbolo: "🌸", colore: "violet-dea", descr: "Ricettività, mondo interiore, trasformazione" },
@@ -118,6 +109,7 @@
       { id: 7, nome: "Estia", simbolo: "🔥", colore: "black-dea", descr: "Interiorità, spiritualità domestica" }
     ];
 
+    // === TESTO DELLE 36 DOMANDE (ispirate ad Arthur Aron) ===
     const testiDomande = [
       "Se potessi scegliere tra qualsiasi persona al mondo, chi inviteresti a cena?",
       "Vorresti essere famoso? Come?",
@@ -157,81 +149,54 @@
       "Condividi un problema personale"
     ];
 
-    // === MAPPATURA DOMANDE → RISONANZE ===
+    // === MAPPATURA DOMANDA → RISONANZE ARCHETIPICHE ===
+    // Ogni domanda attiva 2-3 risonanze (non tutte le dee)
     const mappaRisonanze = [
-      ["Trasformazione", "Desiderio", "Alleanza"], // 1
-      ["Libertà", "Saggezza", "Cura"],            // 2
-      ["Centro", "Saggezza", "Trasformazione"],   // 3
-      ["Desiderio", "Libertà", "Centro"],         // 4
-      ["Desiderio", "Cura", "Libertà"],           // 5
-      ["Saggezza", "Trasformazione", "Desiderio"],// 6
-      ["Trasformazione", "Centro", "Libertà"],    // 7
-      ["Alleanza", "Trasformazione", "Saggezza"], // 8
-      ["Cura", "Centro", "Desiderio"],            // 9
-      ["Trasformazione", "Cura", "Saggezza"],     // 10
-      ["Saggezza", "Trasformazione", "Centro"],   // 11
-      ["Desiderio", "Libertà", "Alleanza"],       // 12
-      ["Trasformazione", "Centro", "Desiderio"],  // 13
-      ["Libertà", "Trasformazione", "Alleanza"],  // 14
-      ["Saggezza", "Cura", "Alleanza"],           // 15
-      ["Libertà", "Cura", "Saggezza"],            // 16
-      ["Cura", "Desiderio", "Centro"],            // 17
-      ["Trasformazione", "Cura", "Libertà"],      // 18
-      ["Trasformazione", "Centro", "Cura"],       // 19
-      ["Libertà", "Cura", "Saggezza"],            // 20
-      ["Desiderio", "Alleanza", "Trasformazione"],// 21
-      ["Desiderio", "Saggezza", "Libertà"],       // 22
-      ["Cura", "Trasformazione", "Centro"],       // 23
-      ["Trasformazione", "Cura", "Libertà"],      // 24
-      ["Alleanza", "Libertà", "Saggezza"],        // 25
-      ["Trasformazione", "Centro", "Desiderio"],  // 26
-      ["Trasformazione", "Cura", "Saggezza"],     // 27
-      ["Desiderio", "Alleanza", "Trasformazione"],// 28
-      ["Libertà", "Trasformazione", "Centro"],    // 29
-      ["Trasformazione", "Centro", "Libertà"],    // 30
-      ["Desiderio", "Saggezza", "Cura"],          // 31
-      ["Trasformazione", "Alleanza", "Saggezza"], // 32
-      ["Trasformazione", "Centro", "Alleanza"],   // 33
-      ["Cura", "Centro", "Libertà"],              // 34
-      ["Trasformazione", "Cura", "Alleanza"],     // 35
-      ["Trasformazione", "Centro", "Saggezza"]    // 36
+      ["Trasformazione", "Desiderio", "Alleanza"],           // 1
+      ["Libertà", "Saggezza", "Cura"],                       // 2
+      ["Centro", "Saggezza", "Trasformazione"],              // 3
+      ["Desiderio", "Libertà", "Centro"],                    // 4
+      ["Desiderio", "Cura", "Libertà"],                      // 5
+      ["Saggezza", "Trasformazione", "Desiderio"],           // 6
+      ["Trasformazione", "Centro", "Libertà"],               // 7
+      ["Alleanza", "Trasformazione", "Saggezza"],            // 8
+      ["Cura", "Centro", "Desiderio"],                       // 9
+      ["Trasformazione", "Cura", "Saggezza"],                // 10
+      ["Saggezza", "Trasformazione", "Centro"],              // 11
+      ["Desiderio", "Libertà", "Alleanza"],                  // 12
+      ["Trasformazione", "Centro", "Desiderio"],             // 13
+      ["Libertà", "Trasformazione", "Alleanza"],             // 14
+      ["Saggezza", "Cura", "Alleanza"],                      // 15
+      ["Libertà", "Cura", "Saggezza"],                       // 16
+      ["Cura", "Desiderio", "Centro"],                       // 17
+      ["Trasformazione", "Cura", "Libertà"],                 // 18
+      ["Trasformazione", "Centro", "Cura"],                  // 19
+      ["Libertà", "Cura", "Saggezza"],                       // 20
+      ["Desiderio", "Alleanza", "Trasformazione"],           // 21
+      ["Desiderio", "Saggezza", "Libertà"],                  // 22
+      ["Cura", "Trasformazione", "Centro"],                  // 23
+      ["Trasformazione", "Cura", "Libertà"],                 // 24
+      ["Alleanza", "Libertà", "Saggezza"],                   // 25
+      ["Trasformazione", "Centro", "Desiderio"],             // 26
+      ["Trasformazione", "Cura", "Saggezza"],                // 27
+      ["Desiderio", "Alleanza", "Trasformazione"],           // 28
+      ["Libertà", "Trasformazione", "Centro"],               // 29
+      ["Trasformazione", "Centro", "Libertà"],               // 30
+      ["Desiderio", "Saggezza", "Cura"],                     // 31
+      ["Trasformazione", "Alleanza", "Saggezza"],            // 32
+      ["Trasformazione", "Centro", "Alleanza"],              // 33
+      ["Cura", "Centro", "Libertà"],                         // 34
+      ["Trasformazione", "Cura", "Alleanza"],                // 35
+      ["Trasformazione", "Centro", "Saggezza"]               // 36
     ];
-
-    // === RIFERIMENTI DOM ===
-    const scelta = document.getElementById("scelta");
-    const test = document.getElementById("test");
-    const ordinamento = document.getElementById("ordinamento");
-    const result = document.getElementById("result");
-    const analysis = document.getElementById("analysis");
-    const currentQ = document.getElementById("currentQ");
-    const nextBtn = document.getElementById("nextBtn");
-    const submitBtn = document.getElementById("submitBtn");
-    const questionsContainer = document.getElementById("questions-container");
-
-    let idx = 0;
-    let score = { Persefone: 0, Afrodite: 0, Artemide: 0, Era: 0, Demetra: 0, Atena: 0, Estia: 0 };
-    let draggedItem = null;
-      // === GESTIONE SCELTA INIZIALE ===
-    document.getElementById("btnTest").onclick = () => {
-      scelta.classList.add("hidden");
-      test.classList.remove("hidden");
-      generaDomande();
-      showQ();
-    };
-
-    document.getElementById("btnOrdina").onclick = () => {
-      scelta.classList.add("hidden");
-      ordinamento.classList.remove("hidden");
-      caricaDee();
-    };
-
-    // === GENERA DOMANDE DINAMICAMENTE ===
+            // === GENERA DOMANDE DINAMICAMENTE ===
     function generaDomande() {
+      const questionsContainer = document.getElementById("questions-container");
       questionsContainer.innerHTML = "";
 
       testiDomande.forEach((domanda, i) => {
         const div = document.createElement("div");
-        div.className = `question ${i > 0 ? 'hidden' : ''}`;
+        div.className = `question ${i === 0 ? '' : 'hidden'}`;
         div.dataset.index = i;
 
         div.innerHTML = `
@@ -258,7 +223,6 @@
             Estia: "Centro"
           }[dea.nome];
 
-          // Mostra solo le risonanze mappate per la domanda
           if (risonanzeDomanda.includes(risonanza)) {
             const btn = document.createElement("button");
             btn.type = "button";
@@ -266,7 +230,6 @@
             btn.dataset.dea = dea.nome;
             btn.dataset.risonanza = risonanza;
             btn.innerHTML = `<span class="mr-1">${dea.simbolo}</span>${risonanza}`;
-            
             risonanzeGroup.appendChild(btn);
           }
         });
@@ -274,18 +237,14 @@
         questionsContainer.appendChild(div);
       });
 
-      // Inizializza eventi risonanza
+      // Inizializza eventi dopo aver creato i pulsanti
       aggiungiEventiRisonanza();
-
-      // Aggiorna riferimento domande
-      window.questions = document.querySelectorAll(".question");
     }
 
     // === GESTISCI EVENTI DI RISONANZA ===
     function aggiungiEventiRisonanza() {
       document.querySelectorAll('.risonanze-group').forEach(group => {
         const buttons = group.querySelectorAll('button');
-
         buttons.forEach(btn => {
           btn.addEventListener('click', function () {
             const selected = group.querySelectorAll('.selected');
@@ -305,234 +264,273 @@
       });
     }
 
-    // === NAVIGAZIONE TEST ===
+    // === NAVIGAZIONE TRA LE DOMANDE ===
     function showQ() {
-      window.questions.forEach((q, i) => {
+      const questions = document.querySelectorAll(".question");
+      questions.forEach((q, i) => {
         q.classList.toggle("hidden", i !== idx);
       });
-      currentQ.textContent = idx + 1;
+      document.getElementById("currentQ").textContent = idx + 1;
+
+      const nextBtn = document.getElementById("nextBtn");
+      const submitBtn = document.getElementById("submitBtn");
       nextBtn.classList.toggle("hidden", idx === testiDomande.length - 1);
-      submitBtn.classList.toggle("hidden", idx !== testiDomandi.length - 1);
+      submitBtn.classList.toggle("hidden", idx !== testiDomande.length - 1);
     }
 
-    nextBtn.onclick = () => {
-      const group = window.questions[idx].querySelector('.risonanze-group');
-      const selected = group.querySelectorAll('.selected');
-      if (selected.length === 0) {
-        alert("Seleziona almeno una risonanza");
-        return;
-      }
-      idx++;
-      showQ();
-    };
+    // === INIZIALIZZAZIONE EVENTI (eseguita dopo il DOM) ===
+    document.addEventListener("DOMContentLoaded", () => {
+      // === RIFERIMENTI DOM (ora sicuri) ===
+      const scelta = document.getElementById("scelta");
+      const test = document.getElementById("test");
+      const ordinamento = document.getElementById("ordinamento");
+      const result = document.getElementById("result");
+      const analysis = document.getElementById("analysis");
+      const nextBtn = document.getElementById("nextBtn");
+      const submitBtn = document.getElementById("submitBtn");
 
-    submitBtn.onclick = () => {
-      const ordine = Object.keys(score).sort((a, b) => score[b] - score[a]);
-      mostraRisultato(ordine);
-    };
-      // === DRAG & DROP SICURO (basato su ID) ===
-    function caricaDee() {
-      const list = document.getElementById("dea-list");
-      list.innerHTML = "";
+      let idx = 0;
+      let score = { Persefone: 0, Afrodite: 0, Artemide: 0, Era: 0, Demetra: 0, Atena: 0, Estia: 0 };
+      let draggedItem = null;
 
-      // Mescola casualmente le dee
-      const shuffled = [...dee].sort(() => Math.random() - 0.5);
-
-      shuffled.forEach(dea => {
-        const el = creaElementoDea(dea);
-        list.appendChild(el);
-      });
-    }
-
-    function creaElementoDea(dea) {
-      const div = document.createElement("div");
-      div.className = `dea-card flex items-center p-4 bg-white rounded-lg shadow cursor-move border-l-4 border-${dea.colore}`;
-      div.draggable = true;
-      div.dataset.id = dea.id;
-
-      div.innerHTML = `
-        <span class="drag-handle text-xl mr-4">☰</span>
-        <span class="text-2xl mr-3">${dea.simbolo}</span>
-        <div>
-          <div class="font-bold text-gray-800">${dea.nome}</div>
-          <div class="text-sm text-gray-500">${dea.descr}</div>
-        </div>
-      `;
-
-      div.addEventListener("dragstart", () => {
-        draggedItem = div;
-        setTimeout(() => div.classList.add("opacity-50"), 0);
-      });
-
-      div.addEventListener("dragend", () => {
-        div.classList.remove("opacity-50");
-      });
-
-      div.addEventListener("dragover", e => {
-        e.preventDefault();
-        if (div !== draggedItem) {
-          const rect = div.getBoundingClientRect();
-          const midpoint = (rect.top + rect.bottom) / 2;
-          if (e.clientY < midpoint) {
-            div.classList.add("border-t-4", "border-t-blue-500");
-          } else {
-            div.classList.add("border-b-4", "border-b-blue-500");
-          }
-        }
-      });
-
-      div.addEventListener("dragleave", () => {
-        div.classList.remove("border-t-4", "border-b-4", "border-t-blue-500", "border-b-blue-500");
-      });
-
-      div.addEventListener("drop", e => {
-        e.preventDefault();
-        div.classList.remove("border-t-4", "border-b-4", "border-t-blue-500", "border-b-blue-500");
-        if (div === draggedItem) return;
-
-        const rect = div.getBoundingClientRect();
-        const midpoint = (rect.top + rect.bottom) / 2;
-        const list = div.parentElement;
-
-        if (e.clientY < midpoint) {
-          list.insertBefore(draggedItem, div);
-        } else {
-          list.insertBefore(draggedItem, div.nextSibling);
-        }
-      });
-
-      return div;
-    }
-
-    // === ANALISI DELL'ORDINE DELLE DEE ===
-    function analizza() {
-      const list = document.getElementById("dea-list");
-      const items = list.querySelectorAll(".dea-card");
-      const ordine = Array.from(items).map(el => {
-        const id = parseInt(el.dataset.id);
-        return dee.find(d => d.id === id).nome;
-      });
-
-      if (ordine.length !== 7 || new Set(ordine).size !== 7) {
-        alert("Errore: assicurati che tutte e 7 le dee siano presenti.");
-        return;
-      }
-
-      mostraRisultato(ordine);
-    }
-
-    // === MOSTRA RISULTATO CON ANALISI PSICOLOGICA AVANZATA ===
-    function mostraRisultato(ordine) {
-      test.classList.add("hidden");
-      ordinamento.classList.add("hidden");
-      scelta.classList.add("hidden");
-      result.classList.remove("hidden");
-
-      const [p1, p2, x1, x2, r1, r2, meno] = ordine;
-      const plus = [p1, p2];
-      const x = [x1, x2];
-      const riserva = [r1, r2];
-
-      // === TESTI PER DEE ===
-      const descrizioni = {
-        Persefone: `<p><strong>Persefone</strong> rappresenta il viaggio nell’ombra, la ricettività, la trasformazione. Quando è in cima, l’anima cerca un amore iniziatico, che ti conduca nel sottosuolo di te stessa.</p>`,
-        Afrodite: `<p><strong>Afrodite</strong> è la dea della bellezza, della sensualità, della creatività. La sua presenza in aspirazione rivela un’anima che vuole vivere l’amore come arte, come estasi.</p>`,
-        Artemide: `<p><strong>Artemide</strong> incarna l’autonomia, la libertà, la lealtà al sé. Quando è in riserva, indica una paura di perdere l’indipendenza in un legame.</p>`,
-        Demetra: `<p><strong>Demetra</strong> è la madre nutriente, colei che accudisce. Quando è rifiutata, rivela una difesa contro il legame fusionale, l’annullamento di sé.</p>`,
-        Era: `<p><strong>Era</strong> rappresenta l’impegno paritario, l’alleanza matura. È l’amore che dura, che sceglie ogni giorno.</p>`,
-        Atena: `<p><strong>Atena</strong> è la mente strategica, la saggia. Quando domina l’attuale, indica una vita guidata dalla ragione, dal controllo.</p>`,
-        Estia: `<p><strong>Estia</strong> è il fuoco domestico, il silenzio, la spiritualità. È colei che protegge il santuario di sé, anche a costo dell’isolamento.</p>`
+      // === GESTIONE SCELTA INIZIALE ===
+      document.getElementById("btnTest").onclick = () => {
+        scelta.classList.add("hidden");
+        test.classList.remove("hidden");
+        generaDomande();
+        showQ();
       };
 
-      let analisiHTML = `<h3 class="text-xl font-bold text-gray-800 mb-4">🔍 Analisi Dettagliata</h3>`;
+      document.getElementById("btnOrdina").onclick = () => {
+        scelta.classList.add("hidden");
+        ordinamento.classList.remove("hidden");
+        caricaDee();
+      };
 
-      analisiHTML += `<p><strong>✅ + (Aspirazione): ${plus.join(' + ')}</strong></p>`;
-      plus.forEach(d => analisiHTML += descrizioni[d]);
+      // === CLICK SU "AVANTI" ===
+      nextBtn.onclick = () => {
+        const questions = document.querySelectorAll(".question");
+        const group = questions[idx].querySelector('.risonanze-group');
+        const selected = group.querySelectorAll('.selected');
+        if (selected.length === 0) {
+          alert("Seleziona almeno una risonanza");
+          return;
+        }
+        idx++;
+        showQ();
+      };
 
-      analisiHTML += `<p><strong>✅ X (Attuale): ${x.join(' + ')}</strong></p>`;
-      x.forEach(d => analisiHTML += descrizioni[d]);
+      // === CLICK SU "SCOPRI LA TUA ANIMA" (test) ===
+      submitBtn.onclick = () => {
+        const ordine = Object.keys(score).sort((a, b) => score[b] - score[a]);
+        mostraRisultato(ordine);
+      };
+            // === DRAG & DROP: carica dee in ordine casuale ===
+      function caricaDee() {
+        const list = document.getElementById("dea-list");
+        list.innerHTML = "";
 
-      analisiHTML += `<p><strong>✅ = (In riserva): ${riserva.join(' + ')}</strong></p>`;
-      riserva.forEach(d => analisiHTML += descrizioni[d]);
+        // Mescola casualmente le dee
+        const shuffled = [...dee].sort(() => Math.random() - 0.5);
 
-      analisiHTML += `<p><strong>❌ — (Rifiuto): ${meno} (7°)</strong></p>`;
-      analisiHTML += descrizioni[meno];
-
-      analisiHTML += `<p><strong>⚖️ Problema Reale: +1 / —7 = ${p1} / ${meno}</strong></p>`;
-
-      if (p1 === "Persefone" && meno === "Demetra") {
-        analisiHTML += `<p>Desideri un’Anima profonda e trasformativa (<strong>Persefone</strong>), ma temi di cadere in un accudimento soffocante (<strong>Demetra</strong>).<br>La tua anima cerca l’abbandono, ma la tua psiche lo difende con forza.</p>`;
-      } else if (p1 === "Afrodite" && meno === "Demetra") {
-        analisiHTML += `<p>Vuoi un amore sensuale e libero (<strong>Afrodite</strong>), ma temi che si trasformi in dovere emotivo (<strong>Demetra</strong>).<br>Il tuo desiderio di bellezza si scontra con la paura del legame che consuma.</p>`;
-      } else if (p1 === "Artemide" && meno === "Era") {
-        analisiHTML += `<p>Cerchi libertà assoluta (<strong>Artemide</strong>), ma temi il tradimento dell’alleanza matura (<strong>Era</strong>).<br>La tua autonomia è sacra, ma a volte diventa isolamento.</p>`;
-      } else {
-        analisiHTML += `<p>Il tuo desiderio più profondo (<strong>${p1}</strong>) entra in tensione con ciò che rifiuti (<strong>${meno}</strong>).<br>Questo conflitto è il motore del tuo processo di crescita.</p>`;
+        shuffled.forEach(dea => {
+          const el = creaElementoDea(dea);
+          list.appendChild(el);
+        });
       }
 
-      analisiHTML += `<h3 class="text-xl font-bold text-gray-800 mt-6 mb-4">📜 Lettera Ritualica all’Anima</h3>`;
-      analisiHTML += `<p><em>A te, Anima mia,</em></p>`;
-      analisiHTML += `<p>Ti ho cercata in ogni donna, ma ora so che sei dentro di me.</p>`;
-      analisiHTML += `<p>Ti chiamo ${p1}, perché desidero la tua ${p1 === "Persefone" ? "profondità, il tuo viaggio nell’ombra, la tua capacità di farmare morire e rinascere" : 
-        p1 === "Afrodite" ? "bellezza, la tua sensualità, la tua arte che salva" :
-        p1 === "Artemide" ? "libertà, la tua autonomia, la tua lealtà al sé" :
-        p1 === "Estia" ? "silenzio, il tuo fuoco domestico, la tua protezione interiore" :
-        p1 === "Era" ? "alleanza, la tua fedeltà, il tuo impegno che dura" :
-        p1 === "Atena" ? "mente, la tua strategia, la tua saggezza che guida" :
-        p1 === "Demetra" ? "nutrimento, la tua cura, la tua forza che sostiene" : "presenza"}.
-</p>
-<p>Ti amo come ${p2}, ${p2 === "Persefone" ? "nella trasformazione" :
-        p2 === "Afrodite" ? "nella bellezza e nel desiderio" :
-        p2 === "Artemide" ? "nella libertà e nell’istinto" :
-        p2 === "Estia" ? "nel silenzio e nella sacralità" :
-        p2 === "Era" ? "nell’impegno e nella parità" :
-        p2 === "Atena" ? "nella ragione e nella protezione" :
-        p2 === "Demetra" ? "nell’accudimento e nella forza" : "nella tua essenza"}.
-</p>
-<p>Ma quando ti sento troppo vicina, troppo potente, mi ritraggo.</p>
-<p>Temo che tu sia ${meno} — colei che ${meno === "Demetra" ? "mi chiede di annullarmi, di essere solo “madre”, “accudente”, “figlia”" :
-        meno === "Era" ? "mi lega per sempre, che mi toglie libertà" :
-        meno === "Persefone" ? "mi trascina nell’ombra, che mi fa perdere il controllo" :
-        meno === "Afrodite" ? "mi seduce troppo, che mi fa dimenticare chi sono" :
-        meno === "Artemide" ? "mi isola dal mondo, che mi fa rinunciare all’amore" :
-        meno === "Estia" ? "mi chiude in me stessa, che mi fa fuggire dalla vita" :
-        meno === "Atena" ? "mi fa diventare fredda, che mi fa negare l’emozione" : "mi cambia"}.</p>
-<p>Così ti rifiuto. Ma ora so: non era te che rifiutavo.</p>
-<p>Era la mia paura di non esistere più come donna se mi fossi abbandonata come essere umano.</p>
-<p>Oggi ti parlo con verità.</p>
-<p>Non ti chiedo di essere solo leggera, né solo profonda.</p>
-<p>Ti chiedo di essere tutta intera:</p>
-<p>la dea che mi seduce,</p>
-<p>la dea che mi trasforma,</p>
-<p>la dea che mi libera,</p>
-<p>la dea che mi nutre — anche se il nutrimento fa paura.</p>
-<p>Prometto di non fuggire più quando sento il richiamo del sottosuolo.</p>
-<p>Prometto di onorare ${riserva[0]} senza usarla come scudo.</p>
-<p>Prometto di accogliere ${x[0]} quando sono stanca,</p>
-<p>e ${x[1]} quando sono confusa.</p>
-<p>Non ti chiedo di essere perfetta.</p>
-<p>Ti chiedo solo di essere reale.</p>
-<p>E io, da donna, prometto di essere abbastanza forte</p>
-<p>per non avere paura della tua debolezza,</p>
-<p>e abbastanza fragile</p>
-<p>per non temere della mia forza.</p>
-<p><em>Con amore,</em></p>
-<p><em>Il mio Sé</em></p>
+      // === CREA UN ELEMENTO DRAGGABLE PER OGNI DEA ===
+      function creaElementoDea(dea) {
+        const div = document.createElement("div");
+        div.className = `dea-card flex items-center p-4 bg-white rounded-lg shadow cursor-move border-l-4 border-${dea.colore}`;
+        div.draggable = true;
+        div.dataset.id = dea.id;
 
-<h3 class="text-xl font-bold text-gray-800 mt-6 mb-4">🌟 Sintesi: Il tuo processo di individuazione</h3>
-<p>Sei una donna in viaggio verso un amore maturo, che unisca ${ordine.slice(0, 2).join(' e ')}, senza cadere né nell’isolamento né nella dipendenza.</p>
-<p>La tua missione è:</p>
-<p><strong>Integrare l’Anima</strong> attraverso la ${p1 === "Persefone" ? "trasformazione" : "bellezza"} e la ${p2 === "Afrodite" ? "creatività" : "libertà"}, senza temere di nutrire né di essere nutrita.</p>
-<p>Onora ogni dea in te. Nessuna va bandita. Ogni rifiuto è una parte di te che chiede di essere vista.</p>";
+        div.innerHTML = `
+          <span class="drag-handle text-xl mr-4">☰</span>
+          <span class="text-2xl mr-3">${dea.simbolo}</span>
+          <div>
+            <div class="font-bold text-gray-800">${dea.nome}</div>
+            <div class="text-sm text-gray-500">${dea.descr}</div>
+          </div>
+        `;
 
-      analysis.innerHTML = analisiHTML;
-      result.scrollIntoView({ behavior: 'smooth' });
-    }
+        div.addEventListener("dragstart", () => {
+          draggedItem = div;
+          setTimeout(() => div.classList.add("opacity-50"), 0);
+        });
 
-    // === Inizializzazione
-    document.addEventListener("DOMContentLoaded", () => {
+        div.addEventListener("dragend", () => {
+          div.classList.remove("opacity-50");
+        });
+
+        div.addEventListener("dragover", e => {
+          e.preventDefault();
+          if (div !== draggedItem) {
+            const rect = div.getBoundingClientRect();
+            const midpoint = (rect.top + rect.bottom) / 2;
+            if (e.clientY < midpoint) {
+              div.classList.add("border-t-4", "border-t-blue-500");
+            } else {
+              div.classList.add("border-b-4", "border-b-blue-500");
+            }
+          }
+        });
+
+        div.addEventListener("dragleave", () => {
+          div.classList.remove("border-t-4", "border-b-4", "border-t-blue-500", "border-b-blue-500");
+        });
+
+        div.addEventListener("drop", e => {
+          e.preventDefault();
+          div.classList.remove("border-t-4", "border-b-4", "border-t-blue-500", "border-b-blue-500");
+          if (div === draggedItem) return;
+
+          const rect = div.getBoundingClientRect();
+          const midpoint = (rect.top + rect.bottom) / 2;
+          const list = div.parentElement;
+
+          if (e.clientY < midpoint) {
+            list.insertBefore(draggedItem, div);
+          } else {
+            list.insertBefore(draggedItem, div.nextSibling);
+          }
+        });
+
+        return div;
+      }
+
+      // === ANALISI DELL'ORDINE MANUALE ===
+      window.analizza = function () {
+        const list = document.getElementById("dea-list");
+        const items = list.querySelectorAll(".dea-card");
+        const ordine = Array.from(items).map(el => {
+          const id = parseInt(el.dataset.id);
+          return dee.find(d => d.id === id).nome;
+        });
+
+        if (ordine.length !== 7 || new Set(ordine).size !== 7) {
+          alert("Errore: assicurati che tutte e 7 le dee siano presenti.");
+          return;
+        }
+
+        mostraRisultato(ordine);
+      };
+
+      // === MOSTRA RISULTATO CON ANALISI PSICOLOGICA ===
+      function mostraRisultato(ordine) {
+        const test = document.getElementById("test");
+        const ordinamento = document.getElementById("ordinamento");
+        const scelta = document.getElementById("scelta");
+        const result = document.getElementById("result");
+        const analysis = document.getElementById("analysis");
+
+        test.classList.add("hidden");
+        ordinamento.classList.add("hidden");
+        scelta.classList.add("hidden");
+        result.classList.remove("hidden");
+
+        const [p1, p2, x1, x2, r1, r2, meno] = ordine;
+        const plus = [p1, p2];
+        const x = [x1, x2];
+        const riserva = [r1, r2];
+
+        // === TESTI PER OGNI DEA ===
+        const descrizioni = {
+          Persefone: `<p><strong>Persefone</strong> rappresenta il viaggio nell’ombra, la ricettività, la trasformazione. Quando è in cima, l’anima cerca un amore iniziatico, che ti conduca nel sottosuolo di te stessa.</p>`,
+          Afrodite: `<p><strong>Afrodite</strong> è la dea della bellezza, della sensualità, della creatività. La sua presenza in aspirazione rivela un’anima che vuole vivere l’amore come arte, come estasi.</p>`,
+          Artemide: `<p><strong>Artemide</strong> incarna l’autonomia, la libertà, la lealtà al sé. Quando è in riserva, indica una paura di perdere l’indipendenza in un legame.</p>`,
+          Demetra: `<p><strong>Demetra</strong> è la madre nutriente, colei che accudisce. Quando è rifiutata, rivela una difesa contro il legame fusionale, l’annullamento di sé.</p>`,
+          Era: `<p><strong>Era</strong> rappresenta l’impegno paritario, l’alleanza matura. È l’amore che dura, che sceglie ogni giorno.</p>`,
+          Atena: `<p><strong>Atena</strong> è la mente strategica, la saggia. Quando domina l’attuale, indica una vita guidata dalla ragione, dal controllo.</p>`,
+          Estia: `<p><strong>Estia</strong> è il fuoco domestico, il silenzio, la spiritualità. È colei che protegge il santuario di sé, anche a costo dell’isolamento.</p>`
+        };
+
+        let analisiHTML = `<h3 class="text-xl font-bold text-gray-800 mb-4">🔍 Analisi Dettagliata</h3>`;
+
+        analisiHTML += `<p><strong>✅ + (Aspirazione): ${plus.join(' + ')}</strong></p>`;
+        plus.forEach(d => analisiHTML += descrizioni[d]);
+
+        analisiHTML += `<p><strong>✅ X (Attuale): ${x.join(' + ')}</strong></p>`;
+        x.forEach(d => analisiHTML += descrizioni[d]);
+
+        analisiHTML += `<p><strong>✅ = (In riserva): ${riserva.join(' + ')}</strong></p>`;
+        riserva.forEach(d => analisiHTML += descrizioni[d]);
+
+        analisiHTML += `<p><strong>❌ — (Rifiuto): ${meno} (7°)</strong></p>`;
+        analisiHTML += descrizioni[meno];
+
+        analisiHTML += `<p><strong>⚖️ Problema Reale: +1 / —7 = ${p1} / ${meno}</strong></p>`;
+
+        if (p1 === "Persefone" && meno === "Demetra") {
+          analisiHTML += `<p>Desideri un’Anima profonda e trasformativa (<strong>Persefone</strong>), ma temi di cadere in un accudimento soffocante (<strong>Demetra</strong>).<br>La tua anima cerca l’abbandono, ma la tua psiche lo difende con forza.</p>`;
+        } else if (p1 === "Afrodite" && meno === "Demetra") {
+          analisiHTML += `<p>Vuoi un amore sensuale e libero (<strong>Afrodite</strong>), ma temi che si trasformi in dovere emotivo (<strong>Demetra</strong>).<br>Il tuo desiderio di bellezza si scontra con la paura del legame che consuma.</p>`;
+        } else if (p1 === "Artemide" && meno === "Era") {
+          analisiHTML += `<p>Cerchi libertà assoluta (<strong>Artemide</strong>), ma temi il tradimento dell’alleanza matura (<strong>Era</strong>).<br>La tua autonomia è sacra, ma a volte diventa isolamento.</p>`;
+        } else {
+          analisiHTML += `<p>Il tuo desiderio più profondo (<strong>${p1}</strong>) entra in tensione con ciò che rifiuti (<strong>${meno}</strong>).<br>Questo conflitto è il motore del tuo processo di crescita.</p>`;
+
+        analisiHTML += `<h3 class="text-xl font-bold text-gray-800 mt-6 mb-4">📜 Lettera Ritualica all’Anima</h3>`;
+        analisiHTML += `<p><em>A te, Anima mia,</em></p>`;
+        analisiHTML += `<p>Ti ho cercata in ogni donna, ma ora so che sei dentro di me.</p>`;
+        analisiHTML += `<p>Ti chiamo ${p1}, perché desidero la tua ${p1 === "Persefone" ? "profondità, il tuo viaggio nell’ombra, la tua capacità di farmi morire e rinascere" : 
+          p1 === "Afrodite" ? "bellezza, la tua sensualità, la tua arte che salva" :
+          p1 === "Artemide" ? "libertà, la tua autonomia, la tua lealtà al sé" :
+          p1 === "Estia" ? "silenzio, il tuo fuoco domestico, la tua protezione interiore" :
+          p1 === "Era" ? "alleanza, la tua fedeltà, il tuo impegno che dura" :
+          p1 === "Atena" ? "mente, la tua strategia, la tua saggezza che guida" :
+          p1 === "Demetra" ? "nutrimento, la tua cura, la tua forza che sostiene" : "presenza"}.</p>`;
+        analisiHTML += `<p>Ti amo come ${p2}, ${p2 === "Persefone" ? "nella trasformazione" :
+          p2 === "Afrodite" ? "nella bellezza e nel desiderio" :
+          p2 === "Artemide" ? "nella libertà e nell’istinto" :
+          p2 === "Estia" ? "nel silenzio e nella sacralità" :
+          p2 === "Era" ? "nell’impegno e nella parità" :
+          p2 === "Atena" ? "nella ragione e nella protezione" :
+          p2 === "Demetra" ? "nell’accudimento e nella forza" : "nella tua essenza"}.</p>`;
+        analisiHTML += `<p>Ma quando ti sento troppo vicina, troppo potente, mi ritraggo.</p>`;
+        analisiHTML += `<p>Temo che tu sia ${meno} — colei che ${meno === "Demetra" ? "mi chiede di annullarmi, di essere solo “madre”, “accudente”, “figlia”" :
+          meno === "Era" ? "mi lega per sempre, che mi toglie libertà" :
+          meno === "Persefone" ? "mi trascina nell’ombra, che mi fa perdere il controllo" :
+          meno === "Afrodite" ? "mi seduce troppo, che mi fa dimenticare chi sono" :
+          meno === "Artemide" ? "mi isola dal mondo, che mi fa rinunciare all’amore" :
+          meno === "Estia" ? "mi chiude in me stessa, che mi fa fuggire dalla vita" :
+          meno === "Atena" ? "mi fa diventare fredda, che mi fa negare l’emozione" : "mi cambia"}.</p>`;
+        analisiHTML += `<p>Così ti rifiuto. Ma ora so: non era te che rifiutavo.</p>`;
+        analisiHTML += `<p>Era la mia paura di non esistere più come donna se mi fossi abbandonata come essere umano.</p>`;
+        analisiHTML += `<p>Oggi ti parlo con verità.</p>`;
+        analisiHTML += `<p>Non ti chiedo di essere solo leggera, né solo profonda.</p>`;
+        analisiHTML += `<p>Ti chiedo di essere tutta intera:</p>`;
+        analisiHTML += `<p>la dea che mi seduce,</p>`;
+        analisiHTML += `<p>la dea che mi trasforma,</p>`;
+        analisiHTML += `<p>la dea che mi libera,</p>`;
+        analisiHTML += `<p>la dea che mi nutre — anche se il nutrimento fa paura.</p>`;
+        analisiHTML += `<p>Prometto di non fuggire più quando sento il richiamo del sottosuolo.</p>`;
+        analisiHTML += `<p>Prometto di onorare ${riserva[0]} senza usarla come scudo.</p>`;
+        analisiHTML += `<p>Prometto di accogliere ${x[0]} quando sono stanca,</p>`;
+        analisiHTML += `<p>e ${x[1]} quando sono confusa.</p>`;
+        analisiHTML += `<p>Non ti chiedo di essere perfetta.</p>`;
+        analisiHTML += `<p>Ti chiedo solo di essere reale.</p>`;
+        analisiHTML += `<p>E io, da donna, prometto di essere abbastanza forte</p>`;
+        analisiHTML += `<p>per non avere paura della tua debolezza,</p>`;
+        analisiHTML += `<p>e abbastanza fragile</p>`;
+        analisiHTML += `<p>per non temere della mia forza.</p>`;
+        analisiHTML += `<p><em>Con amore,</em></p>`;
+        analisiHTML += `<p><em>Il mio Sé</em></p>`;
+
+        analisiHTML += `<h3 class="text-xl font-bold text-gray-800 mt-6 mb-4">🌟 Sintesi: Il tuo processo di individuazione</h3>`;
+        analisiHTML += `<p>Sei una donna in viaggio verso un amore maturo, che unisca ${ordine.slice(0, 2).join(' e ')}, senza cadere né nell’isolamento né nella dipendenza.</p>`;
+        analisiHTML += `<p>La tua missione è:</p>`;
+        analisiHTML += `<p><strong>Integrare l’Anima</strong> attraverso la ${p1 === "Persefone" ? "trasformazione" : "bellezza"} e la ${p2 === "Afrodite" ? "creatività" : "libertà"}, senza temere di nutrire né di essere nutrita.</p>`;
+        analisiHTML += `<p>Onora ogni dea in te. Nessuna va bandita. Ogni rifiuto è una parte di te che chiede di essere vista.</p>`;
+
+        analysis.innerHTML = analisiHTML;
+        result.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      // === Inizializzazione completata
       console.log("Le Dee dentro di Lei: pronte per il viaggio.");
     });
   </script>
 </body>
-</html>    
+</html>
