@@ -158,62 +158,118 @@ const questions = document.querySelectorAll(".question");
 const currentQ = document.getElementById("currentQ");
 const nextBtn = document.getElementById("nextBtn");
 const submitBtn = document.getElementById("submitBtn");
-
 let idx = 0;
 
 /* SCELTA */
-btnTest.onclick = () => { scelta.classList.add("hidden"); test.classList.remove("hidden"); showQ(); }
-btnOrdina.onclick = () => { scelta.classList.add("hidden"); ordinamento.classList.remove("hidden"); caricaDee(); }
+btnTest.onclick = () => { 
+  scelta.classList.add("hidden"); 
+  test.classList.remove("hidden"); 
+  showQ(); 
+};
+
+btnOrdina.onclick = () => { 
+  scelta.classList.add("hidden"); 
+  ordinamento.classList.remove("hidden"); 
+  caricaDee(); 
+};
 
 /* TEST */
 function showQ(){
   questions.forEach((q,i)=>q.classList.toggle("hidden",i!==idx));
   currentQ.textContent = idx+1;
-  nextBtn.classList.toggle("hidden", idx===questions.length-1);
-  submitBtn.classList.toggle("hidden", idx!==questions.length-1);
+  nextBtn.classList.toggle("hidden", idx === questions.length - 1);
+  submitBtn.classList.toggle("hidden", idx !== questions.length - 1);
 }
 
-nextBtn.onclick = ()=>{
-  if(!questions[idx].querySelector("input:checked")){alert("Seleziona una risposta");return;}
-  idx++; showQ();
+nextBtn.onclick = () => {
+  if (!document.querySelector(`input[name="q${idx+1}"]:checked`)) {
+    alert("Seleziona una risposta");
+    return;
+  }
+  idx++;
+  showQ();
 };
 
-submitBtn.onclick = ()=>processaTest();
+submitBtn.onclick = () => processaTest();
 
 function processaTest(){
-  const score={}; dee.forEach(d=>score[d]=0);
-  document.querySelectorAll("input:checked").forEach(r=>score[r.value]++);
-  mostraRisultato(Object.keys(score).sort((a,b)=>score[b]-score[a]));
+  const score = {};
+  dee.forEach(d => score[d] = 0);
+  document.querySelectorAll("input:checked").forEach(r => score[r.value]++);
+  mostraRisultato(Object.keys(score).sort((a,b) => score[b] - score[a]));
 }
 
-/* DRAG & DROP */
-let dragSrc=null;
-function caricaDee(){
-  const list=document.getElementById("dea-list"); list.innerHTML="";
-  dee.forEach(d=>{
-    const div=document.createElement("div");
-    div.className="dea-card p-4 bg-white rounded shadow cursor-move";
-    div.draggable=true; div.textContent=d;
-    div.ondragstart=()=>dragSrc=div;
-    div.ondragover=e=>e.preventDefault();
-    div.ondrop=e=>{e.preventDefault(); if(dragSrc!==div) list.insertBefore(dragSrc,div);}
+/* DRAG & DROP MIGLIORATO */
+function caricaDee() {
+  const list = document.getElementById("dea-list");
+  list.innerHTML = "";
+
+  dee.forEach(d => {
+    const div = document.createElement("div");
+    div.className = "dea-card p-4 bg-white rounded shadow drag-handle cursor-move";
+    div.draggable = true;
+    div.textContent = d;
+
+    div.ondragstart = (e) => {
+      div.classList.add("opacity-50");
+      e.dataTransfer.setData("text/plain", d);
+      dragSrc = div;
+    };
+
+    div.ondragend = () => {
+      div.classList.remove("opacity-50");
+    };
+
+    div.ondragover = (e) => {
+      e.preventDefault();
+      if (div !== dragSrc) {
+        div.classList.add("bg-blue-50", "border-l-4", "border-blue-dea");
+      }
+    };
+
+    div.ondragleave = () => {
+      div.classList.remove("bg-blue-50", "border-l-4", "border-blue-dea");
+    };
+
+    div.ondrop = (e) => {
+      e.preventDefault();
+      div.classList.remove("bg-blue-50", "border-l-4", "border-blue-dea");
+      if (dragSrc !== div) {
+        const rect = div.getBoundingClientRect();
+        const offsetY = e.clientY - rect.top;
+        const height = rect.height;
+
+        if (offsetY < height / 2) {
+          list.insertBefore(dragSrc, div);
+        } else {
+          list.insertBefore(dragSrc, div.nextSibling);
+        }
+      }
+    };
+
     list.appendChild(div);
   });
+
+  list.ondragover = (e) => e.preventDefault();
+  list.ondrop = (e) => {
+    e.preventDefault();
+    if (dragSrc) {
+      list.appendChild(dragSrc);
+    }
+  };
 }
 
-function analizza(){
-  const ordine=[...document.querySelectorAll("#dea-list .dea-card")].map(d=>d.textContent);
+function analizza() {
+  const ordine = [...document.querySelectorAll("#dea-list .dea-card")].map(d => d.textContent);
   mostraRisultato(ordine);
 }
 
-/* RISULTATO */
-function mostraRisultato(ordine){
+function mostraRisultato(ordine) {
   test.classList.add("hidden");
   ordinamento.classList.add("hidden");
   result.classList.remove("hidden");
-  analysis.innerHTML=ordine.map((d,i)=>`<p>${i+1}. ${d}</p>`).join("");
+  analysis.innerHTML = ordine.map((d, i) => `<p>${i+1}. ${d}</p>`).join("");
 }
 </script>
-
 </body>
 </html>
