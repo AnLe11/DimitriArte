@@ -675,8 +675,8 @@
         const div = document.createElement('div');
         div.className = `dea-card flex items-center p-4 bg-white rounded-lg shadow cursor-move border-l-4 border-${dea.colore}`;
         div.draggable = true;
-        div.dataset.id = dea.id;
-div.innerHTML = `
+        div.dataset.id = dea.id; 
+        div.innerHTML = `
   <span class="drag-handle text-xl mr-4">☰</span>
   <span class="text-2xl mr-3">${dea.simbolo}</span>
   <div>
