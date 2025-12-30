@@ -578,6 +578,26 @@
   </div>
 </div>
 
+let dee = [
+  { id: 1, nome: "Persefone", simbolo: "🌸", colore: "violet-dea", descr: "Ricettività, mondo interiore, trasformazione" },
+  { id: 2, nome: "Afrodite", simbolo: "🌹", colore: "red-dea", descr: "Sensualità, bellezza, creatività" },
+  { id: 3, nome: "Artemide", simbolo: "🌙", colore: "blue-dea", descr: "Indipendenza, obiettivi personali" },
+  { id: 4, nome: "Era", simbolo: "👑", colore: "yellow-dea", descr: "Impegno relazionale, matrimonio" },
+  { id: 5, nome: "Demetra", simbolo: "🌾", colore: "brown-dea", descr: "Maternità, nutrimento" },
+  { id: 6, nome: "Atena", simbolo: "🛡️", colore: "green-dea", descr: "Saggezza, strategia, razionalità" },
+  { id: 7, nome: "Estia", simbolo: "🔥", colore: "black-dea", descr: "Interiorità, spiritualità domestica" }
+];
+    
+// Dichiara analizza come funzione globale
+function analizza() {
+  const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card'))
+    .map(el => {
+      const id = el.dataset.id;
+      return dee.find(d => d.id == id).nome;
+    });
+  mostraAnalisi(ordine);
+}
+    
 <!-- Risultato -->
 <div id="result" class="mt-10 p-6 bg-white rounded-lg shadow hidden">
   <h2 class="text-2xl font-bold text-gray-800 mb-4">La tua Anima</h2>
@@ -782,16 +802,6 @@
         <p>Devi imparare a danzare tra questi due poli: non devi scegliere tra fuggire o fonderti, ma trovare un equilibrio tra intensità e sicurezza. La tua anima ti chiama a un amore che trasforma senza distruggere, a una libertà che non nega la connessione.</p>
         <p>Onora tutte le dee in te. Non reprimere ${meno[0]}, ma impara a invitarla con consapevolezza. La vera forza è nell’integrazione, non nella fuga.</p>
       `;
-    }
-
-    // Analisi per ordinamento manuale
-    function analizza() {
-      const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card'))
-        .map(el => {
-          const id = el.dataset.id;
-          return dee.find(d => d.id == id).nome;
-        });
-      mostraAnalisi(ordine);
     }
 
     // Inizializza
