@@ -23,30 +23,49 @@
     }
   </script>
   <style>
-    .drag-handle { cursor: move; user-select: none; }
-    .dea-card { transition: transform 0.2s, box-shadow 0.2s; }
+    .drag-handle {
+      cursor: move;
+      user-select: none;
+    }
+    .dea-card {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
     .dea-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+    .drop-area {
+      min-height: 60px;
+      border: 2px dashed #d1d5db;
+      border-radius: 0.5rem;
+      margin: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
     }
   </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen p-6">
   <div class="max-w-4xl mx-auto">
     <h1 class="text-4xl font-bold text-center mb-4">Le Dee dentro di Lei</h1>
-    <p class="text-center text-gray-600 mb-8">Scegli come vuoi procedere:</p>
+    <p class="text-center text-gray-600 mb-8">
+      Scegli come vuoi procedere:
+    </p>
 
-    <!-- SCELTA -->
+    <!-- SCELTA INIZIALE -->
     <div id="scelta" class="space-y-4 text-center">
-      <button id="btnTest" class="w-full max-w-md mx-auto p-4 bg-white rounded shadow">
-        <strong>1. Fai il test</strong><br>36 domande introspettive
+      <button id="btnTest" class="w-full max-w-md mx-auto p-4 bg-white rounded shadow block">
+        <strong>1. Fai il test</strong><br>
+        36 domande introspettive
       </button>
-      <button id="btnOrdina" class="w-full max-w-md mx-auto p-4 bg-white rounded shadow">
-        <strong>2. Ordina manualmente</strong><br>Drag & Drop delle dee
+      <button id="btnOrdina" class="w-full max-w-md mx-auto p-4 bg-white rounded shadow block">
+        <strong>2. Ordina manualmente</strong><br>
+        Trascina le dee in ordine
       </button>
     </div>
 
-    <!-- TEST -->
+    <!-- SEZIONE TEST -->
     <div id="test" class="hidden mt-10">
       <div class="text-center text-sm text-gray-600 mb-4">
         Domanda <span id="currentQ">1</span> / 36
@@ -54,31 +73,39 @@
       <form id="quizForm">
         <div id="questions-container"></div>
         <div class="text-center mt-6">
-          <button type="button" id="nextBtn" class="bg-blue-dea text-white px-6 py-2 rounded">Avanti</button>
-          <button type="button" id="submitBtn" class="hidden bg-green-dea text-white px-6 py-2 rounded">Scopri la tua Anima</button>
+          <button type="button" id="nextBtn" class="bg-blue-dea text-white px-6 py-2 rounded mr-4">
+            Avanti
+          </button>
+          <button type="button" id="submitBtn" class="hidden bg-green-dea text-white px-6 py-2 rounded">
+            Scopri la tua Anima
+          </button>
         </div>
       </form>
     </div>
-
-    <!-- ORDINAMENTO -->
+        <!-- SEZIONE ORDINAMENTO MANUALE -->
     <div id="ordinamento" class="hidden mt-10">
-      <p class="text-center mb-6">Trascina le dee in ordine di importanza</p>
+      <p class="text-center mb-6 text-gray-700">
+        Trascina le dee in ordine di importanza: 
+        <strong>dalla più vicina a te alla meno presente</strong>.
+      </p>
       <div id="dea-list" class="space-y-3 mb-8"></div>
       <div class="text-center">
-        <button onclick="analizza()" class="bg-blue-dea hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition duration-200">
+        <button 
+          onclick="analizza()" 
+          class="bg-blue-dea hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition duration-200">
           Scopri la tua Anima
         </button>
       </div>
     </div>
 
-    <!-- RISULTATO -->
+    <!-- SEZIONE RISULTATO FINALE -->
     <div id="result" class="hidden mt-10 p-6 bg-white rounded-lg shadow">
-      <h2 class="text-2xl font-bold mb-4">La tua Anima</h2>
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">La tua Anima</h2>
       <div id="analysis" class="text-gray-700 space-y-4"></div>
     </div>
   </div>
     <script>
-    // === DATI DELLE DEE (con simboli, descrizioni, colori) ===
+    // === DATI DELLE DEE (con attributi ricchi) ===
     const dee = [
       { id: 1, nome: "Persefone", simbolo: "🌸", colore: "violet-dea", descr: "Ricettività, mondo interiore, trasformazione" },
       { id: 2, nome: "Afrodite", simbolo: "🌹", colore: "red-dea", descr: "Sensualità, bellezza, creatività" },
@@ -128,9 +155,9 @@
       "Condividi un problema personale"
     ];
 
-    // === ELEMENTI DOM ===
+    // === RIFERIMENTI DOM ===
     const scelta = document.getElementById("scelta");
-    const test = document = document.getElementById("test");
+    const test = document.getElementById("test");
     const ordinamento = document.getElementById("ordinamento");
     const result = document.getElementById("result");
     const analysis = document.getElementById("analysis");
@@ -140,9 +167,9 @@
     const questionsContainer = document.getElementById("questions-container");
 
     let idx = 0;
-    let dragSrcEl = null;
+    let draggedItem = null;
 
-    // === SCELTA ===
+    // === GESTIONE SCELTA INIZIALE ===
     document.getElementById("btnTest").onclick = () => {
       scelta.classList.add("hidden");
       test.classList.remove("hidden");
@@ -156,7 +183,7 @@
       caricaDee();
     };
 
-    // === GENERA DOMANDE ===
+    // === GENERA DOMANDE DINAMICAMENTE ===
     function generaDomande() {
       questionsContainer.innerHTML = testiDomande.map((t, i) => `
         <div class="question ${i > 0 ? 'hidden' : ''}">
@@ -172,9 +199,11 @@
       window.questions = document.querySelectorAll(".question");
     }
 
-    // === TEST NAVIGAZIONE ===
+    // === NAVIGAZIONE TEST ===
     function showQ() {
-      window.questions.forEach((q, i) => q.classList.toggle("hidden", i !== idx));
+      window.questions.forEach((q, i) => {
+        q.classList.toggle("hidden", i !== idx);
+      });
       currentQ.textContent = idx + 1;
       nextBtn.classList.toggle("hidden", idx === testiDomande.length - 1);
       submitBtn.classList.toggle("hidden", idx !== testiDomande.length - 1);
@@ -197,108 +226,146 @@
       mostraRisultato(ordine);
     };
 
-    // === DRAG & DROP FUNZIONANTE (versione collaudata) ===
+    // === DRAG & DROP SICURO (basato su ID, non outerHTML) ===
     function caricaDee() {
+      const list = document.getElementById("dea-list");
+      list.innerHTML = "";
+
+      // Mescola casualmente le dee
       const shuffled = [...dee].sort(() => Math.random() - 0.5);
-      const list = document.getElementById('dea-list');
-      list.innerHTML = '';
+
       shuffled.forEach(dea => {
-        const div = document.createElement('div');
-        div.className = `dea-card flex items-center p-4 bg-white rounded-lg shadow cursor-move border-l-4 border-${dea.colore}`;
-        div.draggable = true;
-        div.dataset.id = dea.id;
-        div.innerHTML = `
-          <span class="drag-handle text-xl mr-4">☰</span>
-          <span class="text-2xl mr-3">${dea.simbolo}</span>
-          <div>
-            <div class="font-bold text-gray-800">${dea.nome}</div>
-            <div class="text-sm text-gray-500">${dea.descr}</div>
-          </div>
-        `;
-        div.addEventListener('dragstart', handleDragStart);
-        div.addEventListener('dragover', handleDragOver);
-        div.addEventListener('drop', handleDrop);
-        list.appendChild(div);
+        const el = creaElementoDea(dea);
+        list.appendChild(el);
       });
     }
 
-    function handleDragStart(e) {
-      dragSrcEl = this;
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/html', this.outerHTML);
-      this.classList.add('opacity-50');
-    }
+    function creaElementoDea(dea) {
+      const div = document.createElement("div");
+      div.className = `dea-card flex items-center p-4 bg-white rounded-lg shadow cursor-move border-l-4 border-${dea.colore}`;
+      div.draggable = true;
+      div.dataset.id = dea.id;
 
-    function handleDragOver(e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-    }
+      div.innerHTML = `
+        <span class="drag-handle text-xl mr-4">☰</span>
+        <span class="text-2xl mr-3">${dea.simbolo}</span>
+        <div>
+          <div class="font-bold text-gray-800">${dea.nome}</div>
+          <div class="text-sm text-gray-500">${dea.descr}</div>
+        </div>
+      `;
 
-    function handleDrop(e) {
-      e.preventDefault();
-      if (dragSrcEl !== this && this.classList.contains('dea-card')) {
-        const srcHTML = dragSrcEl.outerHTML;
-        const targetHTML = this.outerHTML;
-        dragSrcEl.outerHTML = targetHTML;
-        this.outerHTML = srcHTML;
-        rebindEvents();
-      }
-    }
-
-    function rebindEvents() {
-      document.querySelectorAll('.dea-card').forEach(el => {
-        el.removeEventListener('dragstart', handleDragStart);
-        el.removeEventListener('dragover', handleDragOver);
-        el.removeEventListener('drop', handleDrop);
-        el.addEventListener('dragstart', handleDragStart);
-        el.addEventListener('dragover', handleDragOver);
-        el.addEventListener('drop', handleDrop);
+      // Eventi drag
+      div.addEventListener("dragstart", () => {
+        draggedItem = div;
+        setTimeout(() => div.classList.add("opacity-50"), 0);
       });
-    }
 
-    // === ANALISI FINALE ===
+      div.addEventListener("dragend", () => {
+        div.classList.remove("opacity-50");
+      });
+
+      div.addEventListener("dragover", e => {
+        e.preventDefault();
+        if (div !== draggedItem) {
+          const rect = div.getBoundingClientRect();
+          const midpoint = (rect.top + rect.bottom) / 2;
+          if (e.clientY < midpoint) {
+            div.classList.add("border-t-4", "border-t-blue-500");
+          } else {
+            div.classList.add("border-b-4", "border-b-blue-500");
+          }
+        }
+      });
+
+      div.addEventListener("dragleave", () => {
+        div.classList.remove("border-t-4", "border-b-4", "border-t-blue-500", "border-b-blue-500");
+      });
+
+      div.addEventListener("drop", e => {
+        e.preventDefault();
+        div.classList.remove("border-t-4", "border-b-4", "border-t-blue-500", "border-b-blue-500");
+        if (div === draggedItem) return;
+
+        const rect = div.getBoundingClientRect();
+        const midpoint = (rect.top + rect.bottom) / 2;
+        const list = div.parentElement;
+
+        if (e.clientY < midpoint) {
+          list.insertBefore(draggedItem, div);
+        } else {
+          list.insertBefore(draggedItem, div.nextSibling);
+        }
+      });
+
+      return div;
+    }
+       // === ANALISI DELL'ORDINE DELLE DEE ===
     function analizza() {
-      const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card'))
-        .map(el => parseInt(el.dataset.id))
-        .map(id => dee.find(d => d.id === id).nome);
+      const list = document.getElementById("dea-list");
+      const items = list.querySelectorAll(".dea-card");
+      const ordine = Array.from(items).map(el => {
+        const id = parseInt(el.dataset.id);
+        return dee.find(d => d.id === id).nome;
+      });
 
-      if (new Set(ordine).size !== 7) {
-        alert("Errore: assicurati che tutte le dee siano presenti.");
+      // Validazione: 7 dee uniche
+      if (ordine.length !== 7 || new Set(ordine).size !== 7) {
+        alert("Errore: assicurati che tutte e 7 le dee siano presenti.");
         return;
       }
 
       mostraRisultato(ordine);
     }
 
+    // === MOSTRA RISULTATO FINALE ===
     function mostraRisultato(ordine) {
+      // Nascondi tutto
       test.classList.add("hidden");
       ordinamento.classList.add("hidden");
+      scelta.classList.add("hidden");
+
+      // Mostra risultato
       result.classList.remove("hidden");
 
-      const plus = ordine.slice(0, 2);
-      const x = ordine.slice(2, 4);
-      const uguale = ordine.slice(4, 6);
-      const meno = [ordine[6]];
-      const problema = `${plus[0]}/${meno[0]}`;
+      // Estrai gruppi simbolici
+      const plus = ordine.slice(0, 2);           // Aspirazione (+)
+      const x = ordine.slice(2, 4);              // Attuale (X)
+      const uguale = ordine.slice(4, 6);         // Riserva (=)
+      const meno = [ordine[6]];                  // Rifiuto (–)
+      const problema = `${plus[0]}/${meno[0]}`;  // Problema Reale
 
+      // Genera analisi
       analysis.innerHTML = `
         <p><strong>🔹 Aspirazione (+):</strong> ${plus.join(', ')}</p>
         <p>Cerchi unione profonda e bellezza trasformativa. È il tuo modus operandi.</p>
+
         <p><strong>🔸 Situazione attuale (X):</strong> ${x.join(', ')}</p>
         <p>Vivi con ${x[0]} e ${x[1]}, ma in tensione tra libertà e relazione.</p>
+
         <p><strong>🔸 In riserva (=):</strong> ${uguale.join(', ')}</p>
         <p>Hai in ombra ${uguale[0]} e ${uguale[1]} — risorse da integrare.</p>
+
         <p><strong>🔸 Rifiuto (—):</strong> ${meno[0]}</p>
         <p>Temi ${meno[0]} perché minaccia la tua autonomia o il tuo equilibrio emotivo.</p>
+
         <p><strong>🔥 Problema Reale (+1/—7):</strong> ${problema}</p>
         <p>Desideri profondamente ${plus[0]} ma temi di perderti in ${meno[0]}. Questa tensione è il nucleo del tuo processo di individuazione.</p>
+
         <p><strong>🌟 La tua missione</strong></p>
         <p>Devi imparare a danzare tra questi due poli: non devi scegliere tra fuggire o fonderti, ma trovare un equilibrio tra intensità e sicurezza. La tua anima ti chiama a un amore che trasforma senza distruggere, a una libertà che non nega la connessione.</p>
         <p>Onora tutte le dee in te. Non reprimere ${meno[0]}, ma impara a invitarla con consapevolezza. La vera forza è nell’integrazione, non nella fuga.</p>
       `;
 
+      // Scroll dolce al risultato
       result.scrollIntoView({ behavior: 'smooth' });
     }
+
+    // === Inizializzazione (assicura che tutto sia caricato) ===
+    document.addEventListener("DOMContentLoaded", () => {
+      // Assicura che i bottoni siano pronti
+      console.log("Pagina caricata, pronta per l'uso.");
+    });
   </script>
 </body>
-</html>
+</html>   
