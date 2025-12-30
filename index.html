@@ -24,10 +24,10 @@
   </script>
   <style>
     .drag-handle { cursor: move; user-select: none; }
-    .dea-card { transition: transform .2s, box-shadow .2s; }
+    .dea-card { transition: transform 0.2s, box-shadow 0.2s; }
     .dea-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,.1);
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
     }
   </style>
 </head>
@@ -52,7 +52,6 @@
         Domanda <span id="currentQ">1</span> / 36
       </div>
       <form id="quizForm">
-        <!-- DOMANDE GENERATE DINAMICAMENTE -->
         <div id="questions-container"></div>
         <div class="text-center mt-6">
           <button type="button" id="nextBtn" class="bg-blue-dea text-white px-6 py-2 rounded">Avanti</button>
@@ -66,21 +65,30 @@
       <p class="text-center mb-6">Trascina le dee in ordine di importanza</p>
       <div id="dea-list" class="space-y-3 mb-8"></div>
       <div class="text-center">
-        <button onclick="analizza()" class="bg-blue-dea text-white px-8 py-3 rounded-lg">
+        <button onclick="analizza()" class="bg-blue-dea hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow transition duration-200">
           Scopri la tua Anima
         </button>
       </div>
     </div>
 
     <!-- RISULTATO -->
-    <div id="result" class="hidden mt-10 bg-white p-6 rounded shadow">
+    <div id="result" class="hidden mt-10 p-6 bg-white rounded-lg shadow">
       <h2 class="text-2xl font-bold mb-4">La tua Anima</h2>
-      <div id="analysis" class="space-y-3"></div>
+      <div id="analysis" class="text-gray-700 space-y-4"></div>
     </div>
   </div>
     <script>
-    // === DICHIARAZIONE DATI GLOBALE ===
-    const dee = ["Afrodite", "Atena", "Artemide", "Demetra", "Era", "Persefone", "Estia"];
+    // === DATI DELLE DEE (con simboli, descrizioni, colori) ===
+    const dee = [
+      { id: 1, nome: "Persefone", simbolo: "🌸", colore: "violet-dea", descr: "Ricettività, mondo interiore, trasformazione" },
+      { id: 2, nome: "Afrodite", simbolo: "🌹", colore: "red-dea", descr: "Sensualità, bellezza, creatività" },
+      { id: 3, nome: "Artemide", simbolo: "🌙", colore: "blue-dea", descr: "Indipendenza, obiettivi personali" },
+      { id: 4, nome: "Era", simbolo: "👑", colore: "yellow-dea", descr: "Impegno relazionale, matrimonio" },
+      { id: 5, nome: "Demetra", simbolo: "🌾", colore: "brown-dea", descr: "Maternità, nutrimento" },
+      { id: 6, nome: "Atena", simbolo: "🛡️", colore: "green-dea", descr: "Saggezza, strategia, razionalità" },
+      { id: 7, nome: "Estia", simbolo: "🔥", colore: "black-dea", descr: "Interiorità, spiritualità domestica" }
+    ];
+
     const testiDomande = [
       "Se potessi scegliere tra qualsiasi persona al mondo, chi inviteresti a cena?",
       "Vorresti essere famoso? Come?",
@@ -122,7 +130,7 @@
 
     // === ELEMENTI DOM ===
     const scelta = document.getElementById("scelta");
-    const test = document.getElementById("test");
+    const test = document = document.getElementById("test");
     const ordinamento = document.getElementById("ordinamento");
     const result = document.getElementById("result");
     const analysis = document.getElementById("analysis");
@@ -132,28 +140,13 @@
     const questionsContainer = document.getElementById("questions-container");
 
     let idx = 0;
-    let dragSrc = null; // ✅ Dichiarato qui
-
-    // === GENERA DOMANDE ===
-    function generaDomande() {
-      questionsContainer.innerHTML = testiDomande.map((t, i) => `
-        <div class="question ${i > 0 ? 'hidden' : ''}">
-          <p class="font-semibold mb-3">${i + 1}. ${t}</">${dee.map(d => `
-            <label class="block mt-2">
-              <input type="radio" name="q${i + 1}" value="${d}" required> ${d}
-            </label>`).join("")}
-        </div>
-      `).join("");
-
-      // Aggiorna la lista delle domande dopo la generazione
-      window.questions = document.querySelectorAll(".question");
-    }
+    let dragSrcEl = null;
 
     // === SCELTA ===
     document.getElementById("btnTest").onclick = () => {
       scelta.classList.add("hidden");
       test.classList.remove("hidden");
-      generaDomande(); // Genera le domande solo quando serve
+      generaDomande();
       showQ();
     };
 
@@ -162,6 +155,22 @@
       ordinamento.classList.remove("hidden");
       caricaDee();
     };
+
+    // === GENERA DOMANDE ===
+    function generaDomande() {
+      questionsContainer.innerHTML = testiDomande.map((t, i) => `
+        <div class="question ${i > 0 ? 'hidden' : ''}">
+          <p class="font-semibold mb-3">${i + 1}. ${t}</p>
+          ${dee.map(d => `
+            <label class="block mt-2">
+              <input type="radio" name="q${i + 1}" value="${d.nome}" required> ${d.nome}
+            </label>
+          `).join("")}
+        </div>
+      `).join("");
+
+      window.questions = document.querySelectorAll(".question");
+    }
 
     // === TEST NAVIGAZIONE ===
     function showQ() {
@@ -172,7 +181,6 @@
     }
 
     nextBtn.onclick = () => {
-      // ✅ Corretto: uso corretto di querySelector con parentesi
       if (!document.querySelector(`input[name="q${idx + 1}"]:checked`)) {
         alert("Seleziona una risposta");
         return;
@@ -181,78 +189,84 @@
       showQ();
     };
 
-    submitBtn.onclick = () => processaTest();
-
-    function processaTest() {
+    submitBtn.onclick = () => {
       const score = {};
-      dee.forEach(d => score[d] = 0);
+      dee.forEach(d => score[d.nome] = 0);
       document.querySelectorAll("input:checked").forEach(r => score[r.value]++);
-      mostraRisultato(Object.keys(score).sort((a, b) => score[b] - score[a]));
-    }
+      const ordine = Object.keys(score).sort((a, b) => score[b] - score[a]);
+      mostraRisultato(ordine);
+    };
 
-    // === DRAG & DROP MIGLIORATO ===
+    // === DRAG & DROP FUNZIONANTE (versione collaudata) ===
     function caricaDee() {
-      const list = document.getElementById("dea-list");
-      list.innerHTML = "";
-
-      dee.forEach(d => {
-        const div = document.createElement("div");
-        div.className = "dea-card p-4 bg-white rounded shadow drag-handle cursor-move";
+      const shuffled = [...dee].sort(() => Math.random() - 0.5);
+      const list = document.getElementById('dea-list');
+      list.innerHTML = '';
+      shuffled.forEach(dea => {
+        const div = document.createElement('div');
+        div.className = `dea-card flex items-center p-4 bg-white rounded-lg shadow cursor-move border-l-4 border-${dea.colore}`;
         div.draggable = true;
-        div.textContent = d;
-
-        div.ondragstart = (e) => {
-          div.classList.add("opacity-50");
-          e.dataTransfer.setData("text/plain", d);
-          dragSrc = div;
-        };
-
-        div.ondragend = () => {
-          div.classList.remove("opacity-50");
-        };
-
-        div.ondragover = (e) => {
-          e.preventDefault();
-          if (div !== dragSrc) {
-            div.classList.add("bg-blue-50", "border-l-4", "border-blue-dea");
-          }
-        };
-
-        div.ondragleave = () => {
-          div.classList.remove("bg-blue-50", "border-l-4", "border-blue-dea");
-        };
-
-        div.ondrop = (e) => {
-          e.preventDefault();
-          div.classList.remove("bg-blue-50", "border-l-4", "border-blue-dea");
-          if (dragSrc !== div) {
-            const rect = div.getBoundingClientRect();
-            const offsetY = e.clientY - rect.top;
-            const height = rect.height;
-
-            if (offsetY < height / 2) {
-              list.insertBefore(dragSrc, div);
-            } else {
-              list.insertBefore(dragSrc, div.nextSibling);
-            }
-          }
-        };
-
+        div.dataset.id = dea.id;
+        div.innerHTML = `
+          <span class="drag-handle text-xl mr-4">☰</span>
+          <span class="text-2xl mr-3">${dea.simbolo}</span>
+          <div>
+            <div class="font-bold text-gray-800">${dea.nome}</div>
+            <div class="text-sm text-gray-500">${dea.descr}</div>
+          </div>
+        `;
+        div.addEventListener('dragstart', handleDragStart);
+        div.addEventListener('dragover', handleDragOver);
+        div.addEventListener('drop', handleDrop);
         list.appendChild(div);
       });
-
-      // Gestione drop in fondo alla lista
-      list.ondragover = (e) => e.preventDefault();
-      list.ondrop = (e) => {
-        e.preventDefault();
-        if (dragSrc) {
-          list.appendChild(dragSrc);
-        }
-      };
     }
 
+    function handleDragStart(e) {
+      dragSrcEl = this;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/html', this.outerHTML);
+      this.classList.add('opacity-50');
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      if (dragSrcEl !== this && this.classList.contains('dea-card')) {
+        const srcHTML = dragSrcEl.outerHTML;
+        const targetHTML = this.outerHTML;
+        dragSrcEl.outerHTML = targetHTML;
+        this.outerHTML = srcHTML;
+        rebindEvents();
+      }
+    }
+
+    function rebindEvents() {
+      document.querySelectorAll('.dea-card').forEach(el => {
+        el.removeEventListener('dragstart', handleDragStart);
+        el.removeEventListener('dragover', handleDragOver);
+        el.removeEventListener('drop', handleDrop);
+        el.addEventListener('dragstart', handleDragStart);
+        el.addEventListener('dragover', handleDragOver);
+        el.addEventListener('drop', handleDrop);
+      });
+    }
+
+    // === ANALISI FINALE ===
     function analizza() {
-      const ordine = [...document.querySelectorAll("#dea-list .dea-card")].map(d => d.textContent);
+      const ordine = Array.from(document.querySelectorAll('#dea-list .dea-card'))
+        .map(el => parseInt(el.dataset.id))
+        .map(id => dee.find(d => d.id === id).nome);
+
+      if (new Set(ordine).size !== 7) {
+        alert("Errore: assicurati che tutte le dee siano presenti.");
+        return;
+      }
+
       mostraRisultato(ordine);
     }
 
@@ -260,7 +274,30 @@
       test.classList.add("hidden");
       ordinamento.classList.add("hidden");
       result.classList.remove("hidden");
-      analysis.innerHTML = ordine.map((d, i) => `<p><strong>${i + 1}.</strong> ${d}</p>`).join("");
+
+      const plus = ordine.slice(0, 2);
+      const x = ordine.slice(2, 4);
+      const uguale = ordine.slice(4, 6);
+      const meno = [ordine[6]];
+      const problema = `${plus[0]}/${meno[0]}`;
+
+      analysis.innerHTML = `
+        <p><strong>🔹 Aspirazione (+):</strong> ${plus.join(', ')}</p>
+        <p>Cerchi unione profonda e bellezza trasformativa. È il tuo modus operandi.</p>
+        <p><strong>🔸 Situazione attuale (X):</strong> ${x.join(', ')}</p>
+        <p>Vivi con ${x[0]} e ${x[1]}, ma in tensione tra libertà e relazione.</p>
+        <p><strong>🔸 In riserva (=):</strong> ${uguale.join(', ')}</p>
+        <p>Hai in ombra ${uguale[0]} e ${uguale[1]} — risorse da integrare.</p>
+        <p><strong>🔸 Rifiuto (—):</strong> ${meno[0]}</p>
+        <p>Temi ${meno[0]} perché minaccia la tua autonomia o il tuo equilibrio emotivo.</p>
+        <p><strong>🔥 Problema Reale (+1/—7):</strong> ${problema}</p>
+        <p>Desideri profondamente ${plus[0]} ma temi di perderti in ${meno[0]}. Questa tensione è il nucleo del tuo processo di individuazione.</p>
+        <p><strong>🌟 La tua missione</strong></p>
+        <p>Devi imparare a danzare tra questi due poli: non devi scegliere tra fuggire o fonderti, ma trovare un equilibrio tra intensità e sicurezza. La tua anima ti chiama a un amore che trasforma senza distruggere, a una libertà che non nega la connessione.</p>
+        <p>Onora tutte le dee in te. Non reprimere ${meno[0]}, ma impara a invitarla con consapevolezza. La vera forza è nell’integrazione, non nella fuga.</p>
+      `;
+
+      result.scrollIntoView({ behavior: 'smooth' });
     }
   </script>
 </body>
